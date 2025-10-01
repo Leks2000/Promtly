@@ -1,0 +1,54 @@
+{
+  "name": "ai-prompt-improver",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Modern Chrome Extension for improving AI prompts with multiple providers and sharing capabilities",
+  "keywords": ["chrome-extension", "ai", "prompts", "openrouter", "huggingface", "react", "typescript"],
+  "author": "AI Prompt Improver Team",
+  "license": "MIT",
+  "homepage": "https://github.com/your-username/ai-prompt-improver",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/ai-prompt-improver.git"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "build:extension": "node build.js",
+    "demo": "python -m http.server 8080",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext ts,tsx --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules/.cache",
+    "test": "echo 'Tests not implemented yet'",
+    "prepare": "npm run build:extension"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.263.1",
+    "clsx": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@types/chrome": "^0.0.243",
+    "@vitejs/plugin-react": "^4.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "fs-extra": "^11.1.1",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
