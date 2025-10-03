@@ -6,6 +6,9 @@ export interface User {
   googleId?: string;
   createdAt: Date;
   lastLoginAt: Date;
+  isPro: boolean;
+  proExpiresAt?: Date;
+  proStartedAt?: Date;
 }
 
 export interface PromptHistoryItem {
@@ -37,13 +40,15 @@ export interface FavoritePrompt {
 
 export type AIProvider = 'openrouter' | 'poe' | 'huggingface';
 
-export type PromptType = 'civitai' | 'universal' | 'textual';
+export type PromptType = 'civitai' | 'universal' | 'textual' | 'image-analysis';
+
+export type ImagePromptMode = 'general' | 'midjourney' | 'stable-diffusion';
 
 export type Language = 'en' | 'ru';
 
 export type Theme = 'light' | 'dark';
 
-export type TabType = 'improve' | 'history' | 'favorites' | 'settings' | 'profile';
+export type TabType = 'improve' | 'history' | 'favorites' | 'settings' | 'profile' | 'image-analysis';
 
 export interface AIModel {
   id: string;
@@ -74,6 +79,8 @@ export interface AppSettings {
   showAds: boolean;
   cacheEnabled: boolean;
   autoSave: boolean;
+  maxHistoryItems: number;
+  imageAnalysisProvider?: string;
 }
 
 export interface SearchFilters {
@@ -96,6 +103,28 @@ export interface ShareablePrompt {
   createdAt: Date;
 }
 
+export interface ImageAnalysisResult {
+  id: string;
+  userId: string;
+  imageUrl: string;
+  fileName?: string;
+  generalPrompt: string;
+  midjourneyPrompt: string;
+  stableDiffusionPrompt: string;
+  createdAt: Date;
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  duration: number; // days
+  features: string[];
+  historyLimit: number;
+  popular?: boolean;
+}
+
 export interface AppState {
   currentTab: TabType;
   user: User | null;
@@ -108,4 +137,6 @@ export interface AppState {
   searchFilters: SearchFilters;
   selectedProvider: AIProvider;
   selectedModel: AIModel | null;
+  imageAnalysisHistory: ImageAnalysisResult[];
+  availableSubscriptions: SubscriptionPlan[];
 }

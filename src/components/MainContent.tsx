@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import ImproveTab from './tabs/ImproveTab';
+import ImageAnalysisTab from './tabs/ImageAnalysisTab';
 import HistoryTab from './tabs/HistoryTab';
 import FavoritesTab from './tabs/FavoritesTab';
 import SettingsTab from './tabs/SettingsTab';
@@ -13,6 +14,8 @@ const MainContent: React.FC = () => {
     switch (currentTab) {
       case 'improve':
         return <ImproveTab />;
+      case 'image-analysis':
+        return <ImageAnalysisTab />;
       case 'history':
         return <HistoryTab />;
       case 'favorites':

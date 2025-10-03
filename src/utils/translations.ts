@@ -3,6 +3,7 @@ import { Language } from '../types';
 export const translations = {
   en: {
     improve: 'Improve Prompt',
+    imageAnalysis: 'Image Analysis',
     history: 'History',
     favorites: 'Favorites',
     settings: 'Settings',
@@ -43,10 +44,26 @@ export const translations = {
     aiModel: 'AI Model',
     promptType: 'Prompt Type',
     tags: 'Tags',
-    category: 'Category'
+    category: 'Category',
+    proPlan: 'Pro Plan',
+    upgradeToPro: 'Upgrade to Pro',
+    unlimitedHistory: 'Unlimited History',
+    currentPlan: 'Current Plan',
+    freePlan: 'Free Plan',
+    historyLimit: 'History Limited to 10 items',
+    subscriptions: 'Subscriptions',
+    buyPro: 'Buy Pro',
+    month: 'month',
+    year: 'year',
+    popular: 'Popular',
+    fullHistoryAccess: 'Full History Access',
+    prioritySupport: 'Priority Support',
+    advancedFeatures: 'Advanced Features',
+    noAds: 'No Ads'
   },
   ru: {
     improve: 'Улучшить Промпт',
+    imageAnalysis: 'Анализ Изображений',
     history: 'История',
     favorites: 'Избранное',
     settings: 'Настройки',
@@ -87,7 +104,22 @@ export const translations = {
     aiModel: 'Модель ИИ',
     promptType: 'Тип промпта',
     tags: 'Теги',
-    category: 'Категория'
+    category: 'Категория',
+    proPlan: 'Pro План',
+    upgradeToPro: 'Обновиться до Pro',
+    unlimitedHistory: 'Неограниченная История',
+    currentPlan: 'Текущий План',
+    freePlan: 'Бесплатный План',
+    historyLimit: 'История ограничена 10 элементами',
+    subscriptions: 'Подписки',
+    buyPro: 'Купить Pro',
+    month: 'месяц',
+    year: 'год',
+    popular: 'Популярно',
+    fullHistoryAccess: 'Полный Доступ к Истории',
+    prioritySupport: 'Приоритетная Поддержка',
+    advancedFeatures: 'Расширенные Функции',
+    noAds: 'Без Рекламы'
   },
 };
 

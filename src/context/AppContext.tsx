@@ -10,7 +10,9 @@ import {
   AIProvider,
   PromptType,
   AIModel,
-  SearchFilters
+  SearchFilters,
+  ImageAnalysisResult,
+  SubscriptionPlan
 } from '../types';
 import { ChromeApiService } from '../services/chromeApi';
 import { authService } from '../services/auth';
@@ -52,10 +54,21 @@ interface AppContextType extends AppState {
   // Расшаривание
   sharePrompt: (title: string, content: string, type: PromptType, tags: string[]) => Promise<{ shareUrl: string; qrCodeUrl: string }>;
   
+  // Анализ изображений
+  analyzeImage: (imageFile: File) => Promise<ImageAnalysisResult>;
+  getImageAnalysisHistory: () => ImageAnalysisResult[];
+  
+  // Подписки Pro
+  purchaseProSubscription: (planId: string) => Promise<void>;
+  checkProStatus: () => Promise<boolean>;
+  
   // ИИ провайдеры
   selectProvider: (provider: AIProvider) => void;
   selectModel: (model: AIModel) => void;
   getAvailableModels: () => AIModel[];
+  
+  // Аутентификация (обновленные методы)
+  login: (user: User) => void;
   
   // Утилиты
   copyToClipboard: (text: string) => Promise<boolean>;
@@ -82,6 +95,9 @@ type AppAction =
   | { type: 'SELECT_MODEL'; payload: AIModel }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'SET_IMAGE_ANALYSIS_HISTORY'; payload: ImageAnalysisResult[] }
+  | { type: 'ADD_IMAGE_ANALYSIS'; payload: ImageAnalysisResult }
+  | { type: 'UPDATE_USER_PRO_STATUS'; payload: { isPro: boolean; proExpiresAt?: Date } }
   | { type: 'LOAD_STATE'; payload: Partial<AppState> };
 
 const initialState: AppState = {
@@ -114,13 +130,37 @@ const initialState: AppState = {
     ],
     showAds: true,
     cacheEnabled: true,
-    autoSave: true
+    autoSave: true,
+    maxHistoryItems: 10,
+    imageAnalysisProvider: 'openai'
   },
   isLoading: false,
   error: null,
   searchFilters: {},
   selectedProvider: 'openrouter',
-  selectedModel: null
+  selectedModel: null,
+  imageAnalysisHistory: [],
+  availableSubscriptions: [
+    {
+      id: 'pro-monthly',
+      name: 'Pro Monthly',
+      price: 9.99,
+      currency: 'USD',
+      duration: 30,
+      historyLimit: -1,
+      features: ['Unlimited History', 'Priority Support', 'Advanced Features', 'No Ads']
+    },
+    {
+      id: 'pro-yearly',
+      name: 'Pro Yearly',
+      price: 99.99,
+      currency: 'USD',
+      duration: 365,
+      historyLimit: -1,
+      popular: true,
+      features: ['Unlimited History', 'Priority Support', 'Advanced Features', 'No Ads', 'Beta Access']
+    }
+  ]
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -230,6 +270,25 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_ERROR':
       return { ...state, error: action.payload };
     
+    case 'SET_IMAGE_ANALYSIS_HISTORY':
+      return { ...state, imageAnalysisHistory: action.payload };
+
+    case 'ADD_IMAGE_ANALYSIS':
+      return {
+        ...state,
+        imageAnalysisHistory: [action.payload, ...state.imageAnalysisHistory],
+      };
+
+    case 'UPDATE_USER_PRO_STATUS':
+      return {
+        ...state,
+        user: state.user ? {
+          ...state.user,
+          isPro: action.payload.isPro,
+          proExpiresAt: action.payload.proExpiresAt
+        } : null,
+      };
+
     case 'LOAD_STATE':
       return { ...state, ...action.payload };
     
@@ -300,12 +359,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Загрузка данных пользователя
   const loadUserData = async (userId: string) => {
     try {
-      const [history, favorites] = await Promise.all([
+      const [historyResponse, favorites] = await Promise.all([
         databaseService.getUserHistory(userId),
         databaseService.getUserFavorites(userId)
       ]);
 
-      dispatch({ type: 'SET_HISTORY', payload: history.data });
+      let history = historyResponse.data;
+      
+      // Ограничиваем историю для бесплатных пользователей
+      if (state.user && !state.user.isPro) {
+        const maxItems = state.settings.maxHistoryItems;
+        if (maxItems > 0 && history.length > maxItems) {
+          history = history.slice(0, maxItems);
+        }
+      }
+
+      dispatch({ type: 'SET_HISTORY', payload: history });
       dispatch({ type: 'SET_FAVORITES', payload: favorites });
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -399,6 +468,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
       });
 
       dispatch({ type: 'ADD_HISTORY_ITEM', payload: historyItem });
+
+      // Для бесплатных пользователей ограничиваем количество записей в истории
+      if (!state.user.isPro && state.settings.maxHistoryItems > 0) {
+        const currentHistory = [historyItem, ...state.history];
+        if (currentHistory.length > state.settings.maxHistoryItems) {
+          // Удаляем старые записи
+          const itemsToRemove = currentHistory.slice(state.settings.maxHistoryItems);
+          for (const item of itemsToRemove) {
+            await databaseService.deleteHistoryItem(item.id);
+          }
+          
+          // Обновляем локальное состояние
+          const limitedHistory = currentHistory.slice(0, state.settings.maxHistoryItems);
+          dispatch({ type: 'SET_HISTORY', payload: limitedHistory });
+        }
+      }
 
     } catch (error) {
       console.error('Improve prompt error:', error);
@@ -567,6 +652,114 @@ export function AppProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_ERROR', payload: error });
   };
 
+  // Анализ изображений
+  const analyzeImage = async (imageFile: File): Promise<ImageAnalysisResult> => {
+    if (!state.user) {
+      throw new Error('Необходимо войти в систему');
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Импортируем сервис анализа изображений
+      const { imageAnalysisService } = await import('../services/imageAnalysis');
+      
+      const result = await imageAnalysisService.analyzeImage(imageFile, state.user.id);
+      
+      // Добавляем результат в историю анализа
+      dispatch({ type: 'ADD_IMAGE_ANALYSIS', payload: result });
+      
+      // Сохраняем в базе данных (если есть соответствующий сервис)
+      // await databaseService.addImageAnalysis(result);
+      
+      return result;
+    } catch (error) {
+      console.error('Image analysis error:', error);
+      setError(error instanceof Error ? error.message : 'Ошибка анализа изображения');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getImageAnalysisHistory = (): ImageAnalysisResult[] => {
+    return state.imageAnalysisHistory;
+  };
+
+  // Подписки Pro
+  const purchaseProSubscription = async (planId: string): Promise<void> => {
+    if (!state.user) {
+      throw new Error('Необходимо войти в систему');
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // В реальном приложении здесь будет интеграция с платежной системой
+      // Например, Stripe, PayPal или другим провайдером
+      
+      // Для демонстрации симулируем успешную покупку
+      const plan = state.availableSubscriptions.find(p => p.id === planId);
+      if (!plan) {
+        throw new Error('План не найден');
+      }
+
+      // Обновляем статус Pro пользователя
+      const proExpiresAt = new Date();
+      proExpiresAt.setDate(proExpiresAt.getDate() + plan.duration);
+
+      dispatch({ 
+        type: 'UPDATE_USER_PRO_STATUS', 
+        payload: { 
+          isPro: true, 
+          proExpiresAt 
+        } 
+      });
+
+      // В реальном приложении здесь будет вызов к серверу для обновления статуса
+      // await databaseService.updateUserProStatus(state.user.id, true, proExpiresAt);
+
+      // Обновляем настройки для неограниченной истории
+      updateSettings({ maxHistoryItems: -1 });
+
+    } catch (error) {
+      console.error('Purchase error:', error);
+      setError(error instanceof Error ? error.message : 'Ошибка покупки подписки');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkProStatus = async (): Promise<boolean> => {
+    if (!state.user?.isPro) {
+      return false;
+    }
+
+    if (state.user.proExpiresAt) {
+      const now = new Date();
+      const expiresAt = new Date(state.user.proExpiresAt);
+      
+      if (now > expiresAt) {
+        // Подписка истекла
+        dispatch({ 
+          type: 'UPDATE_USER_PRO_STATUS', 
+          payload: { isPro: false } 
+        });
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  // Обновленный метод login
+  const login = (user: User) => {
+    dispatch({ type: 'LOGIN_USER', payload: user });
+  };
+
   const contextValue: AppContextType = {
     ...state,
     setCurrentTab,
@@ -575,6 +768,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     updateSettings,
     loginWithGoogle,
     logout,
+    login,
     improvePrompt,
     addHistoryItem,
     clearHistory,
@@ -586,6 +780,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     updateSearchFilters,
     searchHistory,
     sharePrompt,
+    analyzeImage,
+    getImageAnalysisHistory,
+    purchaseProSubscription,
+    checkProStatus,
     selectProvider,
     selectModel,
     getAvailableModels,

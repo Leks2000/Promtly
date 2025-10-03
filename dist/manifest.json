@@ -2,14 +2,30 @@
   "manifest_version": 3,
   "name": "AI Prompt Improver",
   "version": "1.0.0",
-  "description": "Modern Chrome Extension for improving AI prompts with clean, intuitive UI",
+  "description": "Улучшение промптов с помощью ИИ. Поддержка OpenRouter, HuggingFace, Poe API. Система избранного, поиск и расшаривание промптов.",
+  "author": "AI Prompt Improver Team",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "identity"
+  ],
+  "host_permissions": [
+    "https://openrouter.ai/*",
+    "https://api-inference.huggingface.co/*",
+    "https://poe.com/*",
+    "https://accounts.google.com/*",
+    "https://www.googleapis.com/*",
+    "https://pagead2.googlesyndication.com/*"
   ],
   "action": {
     "default_popup": "index.html",
-    "default_title": "AI Prompt Improver"
+    "default_title": "AI Prompt Improver",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "icons": {
     "16": "icons/icon16.png",
@@ -18,6 +34,20 @@
     "128": "icons/icon128.png"
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://openrouter.ai https://api-inference.huggingface.co https://poe.com https://accounts.google.com https://www.googleapis.com https://pagead2.googlesyndication.com https://api.qrserver.com https://chart.googleapis.com https://is.gd;"
+  },
+  "oauth2": {
+    "client_id": "your-google-client-id.apps.googleusercontent.com",
+    "scopes": ["openid", "email", "profile"]
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
   }
 }
