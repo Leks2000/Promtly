@@ -38,7 +38,7 @@ const TabNavigation: React.FC = () => {
     <div className="flex flex-col w-16 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 transition-colors duration-200">
       {/* Верхняя часть - логотип */}
       <div className="flex flex-col items-center py-3">
-        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl mb-4 shadow-lg">
+        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl mb-4 shadow-lg">
           <Zap className="w-6 h-6 text-white" />
         </div>
       </div>
@@ -55,10 +55,9 @@ const TabNavigation: React.FC = () => {
               onClick={() => setCurrentTab(tab.id)}
               title={getTranslation(tab.labelKey, settings.language)}
               className={clsx(
-                'group relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-200',
-                'hover:scale-105 hover:shadow-md',
+                'group relative flex items-center justify-center w-12 h-12 rounded-xl transition-colors duration-200',
                 {
-                  'bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25': isActive,
+                  'bg-gradient-to-br from-teal-500 to-emerald-600 text-white shadow-lg shadow-teal-500/25': isActive,
                   'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200': !isActive,
                 }
               )}
@@ -72,7 +71,7 @@ const TabNavigation: React.FC = () => {
 
               {/* Активный индикатор слева */}
               {isActive && (
-                <div className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-600 rounded-r-full" />
+                <div className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-teal-500 to-emerald-600 rounded-r-full" />
               )}
             </button>
           );

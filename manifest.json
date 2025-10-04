@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "AI Prompt Improver",
+  "name": "Promptly",
   "version": "1.0.0",
   "description": "Улучшение промптов с помощью ИИ. Поддержка OpenRouter, HuggingFace, Poe API. Система избранного, поиск и расшаривание промптов.",
   "author": "AI Prompt Improver Team",
@@ -14,7 +14,7 @@
   ],
   "action": {
     "default_popup": "index.html",
-    "default_title": "AI Prompt Improver",
+    "default_title": "Promptly",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
@@ -32,7 +32,7 @@
     "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://openrouter.ai https://api-inference.huggingface.co https://poe.com https://accounts.google.com https://www.googleapis.com https://pagead2.googlesyndication.com https://api.qrserver.com https://chart.googleapis.com https://is.gd;"
   },
   "oauth2": {
-    "client_id": "1019228620951-nngjcjtnsvgbo07ue4efb92dso9v73hi.apps.googleusercontent.com",
+    "client_id": "1019228620951-nngjcjtnsvgbo07ue4efb92dso9v73hi.apps.googleusercontent.com", 
     "scopes": ["openid", "email", "profile"]
   },
   "web_accessible_resources": [

@@ -137,7 +137,7 @@ const MockAd: React.FC = () => {
   const [currentAd] = useState(mockAds[Math.floor(Math.random() * mockAds.length)]);
 
   return (
-    <div className="flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-3 max-w-sm">
+    <div className="flex items-center space-x-3 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 rounded-lg p-3 max-w-sm">
       <div className="text-2xl">{currentAd.image}</div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
