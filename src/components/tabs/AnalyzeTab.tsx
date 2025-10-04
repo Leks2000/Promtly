@@ -109,7 +109,8 @@ export default function AnalyzeTab() {
     const file = new File([blob], 'image.jpg', { type: blob.type });
 
     try {
-      const prompts = await ImageAnalysisService.analyzeImage(file);
+      const imageService = new ImageAnalysisService();
+      const prompts = await imageService.generatePrompts(file, 'openrouter');
       setGeneratedPrompts(prompts);
       setError(null);
       

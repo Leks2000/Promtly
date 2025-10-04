@@ -31,7 +31,7 @@ export interface GoogleAuthResponse {
 }
 
 export class AuthService {
-  private clientId = process.env.GOOGLE_CLIENT_ID || 'your-google-client-id';
+  private clientId = 'your-google-client-id';
   private redirectUri = chrome?.identity?.getRedirectURL?.() || 'https://your-extension-id.chromiumapp.org/';
 
   // Chrome Extension OAuth

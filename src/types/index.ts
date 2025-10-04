@@ -40,7 +40,7 @@ export interface FavoritePrompt {
 
 export type AIProvider = 'openrouter' | 'poe' | 'huggingface';
 
-export type PromptType = 'civitai' | 'universal' | 'textual';
+export type PromptType = 'general' | 'civitai' | 'universal' | 'textual';
 
 export type Language = 'en' | 'ru';
 

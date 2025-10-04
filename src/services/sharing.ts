@@ -14,7 +14,7 @@ export class SharingService {
   async sharePrompt(
     title: string,
     content: string,
-    type: 'civitai' | 'universal' | 'textual',
+    type: 'general' | 'civitai' | 'universal' | 'textual',
     tags: string[],
     createdBy: string
   ): Promise<ShareResult> {

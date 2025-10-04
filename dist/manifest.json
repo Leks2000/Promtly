@@ -38,12 +38,20 @@
   },
   "oauth2": {
     "client_id": "your-google-client-id.apps.googleusercontent.com",
-    "scopes": ["openid", "email", "profile"]
+    "scopes": [
+      "openid",
+      "email",
+      "profile"
+    ]
   },
   "web_accessible_resources": [
     {
-      "resources": ["icons/*"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "icons/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "background": {

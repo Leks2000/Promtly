@@ -4,23 +4,14 @@ import { useApp } from '../../context/AppContext';
 import { getTranslation } from '../../utils/translations';
 
 const ProfileTab: React.FC = () => {
-  const { isLoggedIn, user, settings, loginUser, logoutUser } = useApp();
+  const { isLoggedIn, user, settings, loginWithGoogle, logout } = useApp();
 
   const handleGoogleLogin = () => {
-    // Mock Google login - replace with actual Google OAuth implementation
-    const mockUser = {
-      id: 'user_123',
-      name: 'John Doe',
-      email: 'john.doe@gmail.com',
-      avatar: `https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=ffffff&size=128`,
-      createdAt: new Date(),
-      lastLoginAt: new Date(),
-    };
-    loginUser(mockUser);
+    loginWithGoogle();
   };
 
   const handleLogout = () => {
-    logoutUser();
+    logout();
   };
 
   return (

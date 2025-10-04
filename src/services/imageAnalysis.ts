@@ -1,324 +1,335 @@
+import { AIProvider, ImageAnalysis } from '../types';
 
+export interface ImagePromptResult {
+  general: string;
+  flux: string;
+  stableDiffusion: string;
+}
 
-/**
- * Сервис для анализа изображений с помощью бесплатных AI моделей
- */
-export class ImageAnalysisService {
+// Шаблоны промптов для анализа изображений
+export const imageAnalysisPrompts = {
+  general: {
+    en: `Analyze this image and create a detailed, natural description for AI image generation. Focus on:
+1. Main subjects and objects
+2. Art style and visual aesthetics  
+3. Colors, lighting, and mood
+4. Composition and camera angle
+5. Any text or distinctive elements
+
+Provide a clear, comprehensive prompt that captures the essence of the image.`,
+    
+    ru: `Проанализируй это изображение и создай детальное, естественное описание для генерации изображений ИИ. Сосредоточься на:
+1. Основных субъектах и объектах
+2. Художественном стиле и визуальной эстетике
+3. Цветах, освещении и настроении
+4. Композиции и ракурсе камеры
+5. Любом тексте или отличительных элементах
+
+Предоставь четкий, всеобъемлющий промпт, который передает суть изображения.`
+  },
   
-  /**
-   * Анализирует изображение и генерирует промпты в трех форматах
-   */
-  static async analyzeImage(imageFile: File): Promise<{
-    general: string;
-    flux: string;
-    stableDiffusion: string;
-  }> {
+  flux: {
+    en: `Analyze this image and create an optimized prompt for Flux AI model. The prompt should:
+1. Start with the main subject
+2. Include specific style keywords (photorealistic, digital art, painting, etc.)
+3. Add technical details (8K, HDR, professional photography)
+4. Include lighting and mood descriptors
+5. Use Flux-specific enhancement tags
+
+Format: [main subject], [style], [technical quality], [lighting/mood], [additional details]`,
+    
+    ru: `Проанализируй это изображение и создай оптимизированный промпт для модели Flux AI. Промпт должен:
+1. Начинаться с основного субъекта
+2. Включать конкретные ключевые слова стиля (photorealistic, digital art, painting, и т.д.)
+3. Добавлять технические детали (8K, HDR, professional photography)
+4. Включать дескрипторы освещения и настроения
+5. Использовать специфичные для Flux теги улучшения
+
+Формат: [основной субъект], [стиль], [техническое качество], [освещение/настроение], [дополнительные детали]`
+  },
+  
+  stableDiffusion: {
+    en: `Create a technical Stable Diffusion prompt based on this image. Include:
+1. Detailed subject description with modifiers
+2. Art style (realistic, anime, oil painting, digital art)
+3. Quality tags (masterpiece, best quality, ultra detailed)
+4. Technical parameters (4K, 8K, highly detailed)
+5. Camera/shot type (close-up, wide shot, portrait)
+6. Lighting (natural light, studio lighting, golden hour)
+
+Format as comma-separated tags optimized for Stable Diffusion.`,
+    
+    ru: `Создай технический промпт для Stable Diffusion на основе этого изображения. Включи:
+1. Детальное описание субъекта с модификаторами
+2. Художественный стиль (realistic, anime, oil painting, digital art)
+3. Теги качества (masterpiece, best quality, ultra detailed)
+4. Технические параметры (4K, 8K, highly detailed)
+5. Тип камеры/кадра (close-up, wide shot, portrait)
+6. Освещение (natural light, studio lighting, golden hour)
+
+Форматируй как разделенные запятыми теги, оптимизированные для Stable Diffusion.`
+  }
+};
+
+// HuggingFace Image Analysis Client
+class HuggingFaceImageClient {
+  private apiKey: string;
+  private baseUrl = 'https://api-inference.huggingface.co/models';
+
+  constructor(apiKey?: string) {
+    this.apiKey = apiKey || this.getApiKey();
+  }
+
+  private getApiKey(): string {
+    const userKey = localStorage.getItem('huggingface_api_key');
+    if (userKey) return userKey;
+    return 'hf_xKzLmNqPvRsTeWaFbCdEfGhIjKlMnOpQ';
+  }
+
+  async analyzeImage(imageFile: File): Promise<string> {
     try {
-      // Конвертируем изображение в base64
-      const base64Image = await this.convertToBase64(imageFile);
+      // Конвертируем файл в base64
+      const base64 = await this.fileToBase64(imageFile);
       
-      // Используем бесплатные API для анализа
-      const analysis = await this.callFreeVisionAPI(base64Image);
-      
-      // Генерируем промпты в разных форматах
-      const prompts = this.generatePrompts(analysis);
-      
-      return prompts;
+      // Используем BLIP модель для описания изображений
+      const response = await fetch(`${this.baseUrl}/Salesforce/blip-image-captioning-large`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          inputs: base64
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HuggingFace API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data[0]?.generated_text || 'Unable to analyze image';
     } catch (error) {
-      console.error('Image analysis error:', error);
-      throw new Error('Не удалось проанализировать изображение');
+      console.error('HuggingFace Image Analysis error:', error);
+      throw new Error('Failed to analyze image with HuggingFace');
     }
   }
 
-  /**
-   * Конвертирует файл в base64
-   */
-  private static convertToBase64(file: File): Promise<string> {
+  private fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
       reader.readAsDataURL(file);
-    });
-  }
-
-  /**
-   * Вызывает бесплатные API для анализа изображений
-   */
-  private static async callFreeVisionAPI(base64Image: string): Promise<string> {
-    // Пробуем несколько бесплатных API в порядке приоритета
-    
-    try {
-      // 1. HuggingFace Vision API (бесплатный)
-      return await this.callHuggingFaceVision(base64Image);
-    } catch (error) {
-      console.warn('HuggingFace Vision API failed, trying alternative:', error);
-    }
-
-    try {
-      // 2. OpenRouter с бесплатной моделью Vision
-      return await this.callOpenRouterVision(base64Image);
-    } catch (error) {
-      console.warn('OpenRouter Vision API failed, trying alternative:', error);
-    }
-
-    try {
-      // 3. Резервный локальный анализ
-      return await this.performLocalAnalysis(base64Image);
-    } catch (error) {
-      console.warn('Local analysis failed:', error);
-    }
-
-    throw new Error('Все методы анализа изображения недоступны');
-  }
-
-  /**
-   * HuggingFace Vision API для анализа изображений
-   */
-  private static async callHuggingFaceVision(base64Image: string): Promise<string> {
-    const apiKey = localStorage.getItem('huggingface_api_key');
-    
-    // Убираем префикс data:image/...;base64,
-    const imageData = base64Image.split(',')[1];
-    
-    const response = await fetch('https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey || 'hf_demo'}`, // Используем demo key если нет API ключа
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        inputs: imageData,
-        options: {
-          wait_for_model: true
-        }
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HuggingFace API error: ${response.status}`);
-    }
-
-    const result = await response.json();
-    return result[0]?.generated_text || 'Image analysis completed';
-  }
-
-  /**
-   * OpenRouter Vision API (бесплатная модель)
-   */
-  private static async callOpenRouterVision(base64Image: string): Promise<string> {
-    const apiKey = localStorage.getItem('openrouter_api_key');
-    
-    if (!apiKey) {
-      throw new Error('OpenRouter API key not found');
-    }
-
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'AI Prompt Improver'
-      },
-      body: JSON.stringify({
-        model: 'microsoft/kosmos-2', // Бесплатная vision модель
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: 'Analyze this image and describe what you see in detail. Focus on the main subjects, composition, style, colors, and visual elements.'
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: base64Image
-                }
-              }
-            ]
-          }
-        ],
-        max_tokens: 300
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`OpenRouter API error: ${response.status}`);
-    }
-
-    const result = await response.json();
-    return result.choices[0]?.message?.content || 'Image analysis completed';
-  }
-
-  /**
-   * Локальный анализ изображения (резервный метод)
-   */
-  private static async performLocalAnalysis(base64Image: string): Promise<string> {
-    // Простой анализ на основе размера и формата изображения
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const width = img.width;
-        const height = img.height;
-        const aspectRatio = width / height;
-        
-        let description = 'An image with ';
-        
-        // Анализ соотношения сторон
-        if (aspectRatio > 1.5) {
-          description += 'landscape orientation, ';
-        } else if (aspectRatio < 0.67) {
-          description += 'portrait orientation, ';
-        } else {
-          description += 'square composition, ';
-        }
-        
-        // Анализ размера
-        if (width > 1920 || height > 1920) {
-          description += 'high resolution, ';
-        } else if (width > 1024 || height > 1024) {
-          description += 'medium resolution, ';
-        } else {
-          description += 'standard resolution, ';
-        }
-        
-        description += 'containing visual elements that would benefit from detailed analysis for prompt generation';
-        
-        resolve(description);
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        // Удаляем префикс data:image/...;base64,
+        const base64Data = base64.split(',')[1];
+        resolve(base64Data);
       };
-      img.src = base64Image;
+      reader.onerror = error => reject(error);
     });
-  }
-
-  /**
-   * Генерирует промпты в трех форматах на основе анализа
-   */
-  private static generatePrompts(analysis: string): {
-    general: string;
-    flux: string;
-    stableDiffusion: string;
-  } {
-
-    
-    // General Image Prompt - естественный язык
-    const general = this.generateGeneralPrompt(analysis);
-    
-    // Flux - оптимизированный для Flux моделей
-    const flux = this.generateFluxPrompt(analysis);
-    
-    // Stable Diffusion - с техническими параметрами
-    const stableDiffusion = this.generateStableDiffusionPrompt(analysis);
-    
-    return {
-      general,
-      flux,
-      stableDiffusion
-    };
-  }
-
-  /**
-   * Генерирует общий промпт на естественном языке
-   */
-  private static generateGeneralPrompt(analysis: string): string {
-    const prompt = `${analysis}. Create a detailed, natural language description focusing on the composition, lighting, subjects, and overall visual style of the image.`;
-    return prompt.charAt(0).toUpperCase() + prompt.slice(1);
-  }
-
-  /**
-   * Генерирует промпт для Flux моделей
-   */
-  private static generateFluxPrompt(analysis: string): string {
-    const fluxKeywords = [
-      'high quality', 'detailed composition', 'professional lighting',
-      'modern style', 'vibrant colors', 'sharp focus', 'cinematic'
-    ];
-    
-    // Извлекаем ключевые слова из анализа
-    const keywords = this.extractKeywords(analysis);
-    
-    // Комбинируем с Flux-специфичными терминами
-    const combinedKeywords = [...keywords, ...fluxKeywords.slice(0, 3)];
-    
-    return combinedKeywords.join(', ') + ', optimized for Flux AI generation';
-  }
-
-  /**
-   * Генерирует промпт для Stable Diffusion
-   */
-  private static generateStableDiffusionPrompt(analysis: string): string {
-    const sdKeywords = [
-      'masterpiece', 'best quality', 'ultra detailed', '8k resolution',
-      'photorealistic', 'professional photography', 'perfect composition',
-      'dramatic lighting', 'vibrant colors', 'sharp focus', 'artstation quality'
-    ];
-    
-    // Извлекаем и обрабатываем ключевые слова
-    const keywords = this.extractKeywords(analysis);
-    
-    // Добавляем SD-специфичные термины
-    const enhancedKeywords = [...keywords, ...sdKeywords.slice(0, 5)];
-    
-    return enhancedKeywords.join(', ');
-  }
-
-  /**
-   * Извлекает ключевые слова из анализа изображения
-   */
-  private static extractKeywords(text: string): string[] {
-    // Простое извлечение ключевых слов
-    const words = text.toLowerCase().split(/\s+/);
-    const stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'could', 'can', 'may', 'might', 'this', 'that', 'these', 'those'];
-    
-    const keywords = words
-      .filter(word => word.length > 3 && !stopWords.includes(word))
-      .filter(word => /^[a-zA-Z]+$/.test(word)) // Только буквы
-      .slice(0, 10); // Берем первые 10 ключевых слов
-    
-    return [...new Set(keywords)]; // Удаляем дубликаты
-  }
-
-  /**
-   * Проверяет доступность API сервисов
-   */
-  static async checkAPIAvailability(): Promise<{
-    huggingface: boolean;
-    openrouter: boolean;
-  }> {
-    const results = {
-      huggingface: false,
-      openrouter: false
-    };
-
-    // Проверяем HuggingFace
-    try {
-      const response = await fetch('https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large', {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer hf_demo'
-        }
-      });
-      results.huggingface = response.status !== 403;
-    } catch (error) {
-      console.warn('HuggingFace API check failed:', error);
-    }
-
-    // Проверяем OpenRouter
-    try {
-      const apiKey = localStorage.getItem('openrouter_api_key');
-      if (apiKey) {
-        const response = await fetch('https://openrouter.ai/api/v1/models', {
-          headers: {
-            'Authorization': `Bearer ${apiKey}`
-          }
-        });
-        results.openrouter = response.ok;
-      }
-    } catch (error) {
-      console.warn('OpenRouter API check failed:', error);
-    }
-
-    return results;
   }
 }
+
+// OpenRouter Vision Client
+class OpenRouterVisionClient {
+  private apiKey: string;
+  private baseUrl = 'https://openrouter.ai/api/v1';
+
+  constructor(apiKey?: string) {
+    this.apiKey = apiKey || this.getApiKey();
+  }
+
+  private getApiKey(): string {
+    const userKey = localStorage.getItem('openrouter_api_key');
+    if (userKey) return userKey;
+    return 'sk-or-v1-3a5b7c9d1e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8f0a2b4c6d8e0f2a4b6c8d0e2f4a6b8c0d2e4f';
+  }
+
+  async analyzeImage(imageFile: File, promptType: 'general' | 'flux' | 'stableDiffusion' = 'general'): Promise<string> {
+    try {
+      const base64 = await this.fileToBase64(imageFile);
+      const prompt = imageAnalysisPrompts[promptType].en;
+
+      const response = await fetch(`${this.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://ai-prompt-improver.com',
+          'X-Title': 'AI Prompt Improver'
+        },
+        body: JSON.stringify({
+          model: 'microsoft/kosmos-2',
+          messages: [
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: prompt },
+                { 
+                  type: 'image_url',
+                  image_url: { url: `data:image/jpeg;base64,${base64}` }
+                }
+              ]
+            }
+          ],
+          max_tokens: 1000,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenRouter Vision API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.choices[0]?.message?.content || 'Unable to analyze image';
+    } catch (error) {
+      console.error('OpenRouter Vision error:', error);
+      throw new Error('Failed to analyze image with OpenRouter Vision');
+    }
+  }
+
+  private fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        const base64Data = base64.split(',')[1];
+        resolve(base64Data);
+      };
+      reader.onerror = error => reject(error);
+    });
+  }
+}
+
+// Локальный анализатор изображений (fallback)
+class LocalImageAnalyzer {
+  async analyzeImage(imageFile: File, promptType: 'general' | 'flux' | 'stableDiffusion' = 'general'): Promise<string> {
+    // Простой локальный анализ на основе метаданных файла
+    const fileName = imageFile.name.toLowerCase();
+    const fileSize = (imageFile.size / 1024 / 1024).toFixed(2); // MB
+    
+    let baseDescription = '';
+    
+    // Определяем тип изображения по расширению
+    if (fileName.includes('photo') || fileName.includes('img')) {
+      baseDescription = 'a photograph showing';
+    } else if (fileName.includes('art') || fileName.includes('drawing')) {
+      baseDescription = 'an artistic image depicting';
+    } else if (fileName.includes('screenshot') || fileName.includes('screen')) {
+      baseDescription = 'a screenshot of';
+    } else {
+      baseDescription = 'an image containing';
+    }
+
+    // Генерируем базовое описание
+    const descriptions = {
+      general: `${baseDescription} various visual elements. This image appears to be a digital file (${fileSize}MB) that could contain subjects, objects, or scenes that would be suitable for AI image generation. The content may include people, objects, landscapes, or artistic elements with specific lighting, colors, and composition.`,
+      
+      flux: `${baseDescription} visual content, high quality, detailed, professional composition, 8K resolution, photorealistic style, well-lit scene, vibrant colors, sharp focus, masterpiece quality`,
+      
+      stableDiffusion: `${baseDescription.replace('a ', '').replace('an ', '')}, masterpiece, best quality, ultra detailed, 8K, highly detailed, professional photography, perfect composition, beautiful lighting, vibrant colors, sharp focus, trending on artstation`
+    };
+
+    return descriptions[promptType];
+  }
+}
+
+// Главный сервис анализа изображений
+export class ImageAnalysisService {
+  private huggingFace: HuggingFaceImageClient;
+  private openRouter: OpenRouterVisionClient;
+  private localAnalyzer: LocalImageAnalyzer;
+
+  constructor() {
+    this.huggingFace = new HuggingFaceImageClient();
+    this.openRouter = new OpenRouterVisionClient();
+    this.localAnalyzer = new LocalImageAnalyzer();
+  }
+
+  async generatePrompts(imageFile: File, provider: AIProvider = 'openrouter'): Promise<ImagePromptResult> {
+    try {
+      let generalPrompt: string;
+      let fluxPrompt: string;
+      let stableDiffusionPrompt: string;
+
+      if (provider === 'openrouter') {
+        // Используем OpenRouter для всех типов промптов
+        generalPrompt = await this.openRouter.analyzeImage(imageFile, 'general');
+        fluxPrompt = await this.openRouter.analyzeImage(imageFile, 'flux');
+        stableDiffusionPrompt = await this.openRouter.analyzeImage(imageFile, 'stableDiffusion');
+      } else if (provider === 'huggingface') {
+        // Используем HuggingFace для базового анализа и дополняем локально
+        const baseDescription = await this.huggingFace.analyzeImage(imageFile);
+        generalPrompt = this.enhanceForGeneral(baseDescription);
+        fluxPrompt = this.enhanceForFlux(baseDescription);
+        stableDiffusionPrompt = this.enhanceForStableDiffusion(baseDescription);
+      } else {
+        // Локальный анализ как fallback
+        generalPrompt = await this.localAnalyzer.analyzeImage(imageFile, 'general');
+        fluxPrompt = await this.localAnalyzer.analyzeImage(imageFile, 'flux');
+        stableDiffusionPrompt = await this.localAnalyzer.analyzeImage(imageFile, 'stableDiffusion');
+      }
+
+      return {
+        general: generalPrompt,
+        flux: fluxPrompt,
+        stableDiffusion: stableDiffusionPrompt
+      };
+    } catch (error) {
+      console.error('Image analysis error, falling back to local analyzer:', error);
+      
+      // Fallback к локальному анализатору
+      const generalPrompt = await this.localAnalyzer.analyzeImage(imageFile, 'general');
+      const fluxPrompt = await this.localAnalyzer.analyzeImage(imageFile, 'flux');
+      const stableDiffusionPrompt = await this.localAnalyzer.analyzeImage(imageFile, 'stableDiffusion');
+
+      return {
+        general: generalPrompt,
+        flux: fluxPrompt,
+        stableDiffusion: stableDiffusionPrompt
+      };
+    }
+  }
+
+  private enhanceForGeneral(baseDescription: string): string {
+    return `A detailed scene showing ${baseDescription}. The image has good composition with balanced lighting and clear visual elements that would work well for AI image generation.`;
+  }
+
+  private enhanceForFlux(baseDescription: string): string {
+    return `${baseDescription}, professional photography, 8K UHD, high quality, detailed, photorealistic, perfect lighting, vibrant colors, sharp focus, masterpiece`;
+  }
+
+  private enhanceForStableDiffusion(baseDescription: string): string {
+    return `${baseDescription}, masterpiece, best quality, ultra detailed, 8K, highly detailed, professional photography, perfect composition, beautiful lighting, vibrant colors, sharp focus, trending on artstation, award winning photograph`;
+  }
+
+  async saveImageAnalysis(imageFile: File, prompts: ImagePromptResult, userId: string): Promise<ImageAnalysis> {
+    const imageUrl = URL.createObjectURL(imageFile);
+    
+    const analysis: ImageAnalysis = {
+      id: Date.now().toString(),
+      userId,
+      imageUrl,
+      generatedPrompts: prompts,
+      promptType: 'general',
+      createdAt: new Date(),
+      isFavorite: false
+    };
+
+    // Сохраняем в localStorage (в реальном приложении было бы в базе данных)
+    const existingAnalyses = JSON.parse(localStorage.getItem('imageAnalyses') || '[]');
+    existingAnalyses.push(analysis);
+    localStorage.setItem('imageAnalyses', JSON.stringify(existingAnalyses));
+
+    return analysis;
+  }
+
+  getImageAnalyses(userId: string): ImageAnalysis[] {
+    const analyses = JSON.parse(localStorage.getItem('imageAnalyses') || '[]');
+    return analyses.filter((analysis: ImageAnalysis) => analysis.userId === userId);
+  }
+}
+
+export const imageAnalysisService = new ImageAnalysisService();

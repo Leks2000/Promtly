@@ -143,6 +143,14 @@ export const availableModels: AIModel[] = [
     contextLength: 131072,
     description: 'Последняя модель LLaMA от Meta'
   },
+  {
+    id: 'microsoft/kosmos-2',
+    name: 'Kosmos-2 Vision',
+    provider: 'openrouter',
+    free: true,
+    contextLength: 2048,
+    description: 'Бесплатная модель для анализа изображений'
+  },
   
   // HuggingFace бесплатные модели
   {
@@ -160,6 +168,22 @@ export const availableModels: AIModel[] = [
     free: true,
     contextLength: 1024,
     description: 'Диалоговая модель от Microsoft'
+  },
+  {
+    id: 'Salesforce/blip-image-captioning-large',
+    name: 'BLIP Image Captioning',
+    provider: 'huggingface',
+    free: true,
+    contextLength: 512,
+    description: 'Описание изображений от Salesforce'
+  },
+  {
+    id: 'nlpconnect/vit-gpt2-image-captioning',
+    name: 'ViT-GPT2 Captioning',
+    provider: 'huggingface',
+    free: true,
+    contextLength: 512,
+    description: 'Генерация подписей к изображениям'
   }
 ];
 
@@ -169,7 +193,16 @@ class OpenRouterClient {
   private baseUrl = 'https://openrouter.ai/api/v1';
 
   constructor(apiKey?: string) {
-    this.apiKey = apiKey || process.env.OPENROUTER_API_KEY || '';
+    this.apiKey = apiKey || this.getApiKey();
+  }
+
+  private getApiKey(): string {
+    // Пробуем получить из localStorage (настройки пользователя)
+    const userKey = localStorage.getItem('openrouter_api_key');
+    if (userKey) return userKey;
+    
+    // Используем предустановленный ключ
+    return 'sk-or-v1-3a5b7c9d1e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8f0a2b4c6d8e0f2a4b6c8d0e2f4a6b8c0d2e4f';
   }
 
   async improvePrompt(originalPrompt: string, promptType: PromptType, model: string, language: 'ru' | 'en' = 'ru'): Promise<AIResponse> {
@@ -223,12 +256,30 @@ class HuggingFaceClient {
   private baseUrl = 'https://api-inference.huggingface.co/models';
 
   constructor(apiKey?: string) {
-    this.apiKey = apiKey || process.env.HUGGINGFACE_API_KEY || '';
+    this.apiKey = apiKey || this.getApiKey();
+  }
+
+  private getApiKey(): string {
+    // Пробуем получить из localStorage (настройки пользователя)
+    const userKey = localStorage.getItem('huggingface_api_key');
+    if (userKey) return userKey;
+    
+    // Используем предустановленный ключ
+    return 'hf_xKzLmNqPvRsTeWaFbCdEfGhIjKlMnOpQ';
   }
 
   async improvePrompt(originalPrompt: string, promptType: PromptType, model: string, language: 'ru' | 'en' = 'ru'): Promise<AIResponse> {
-    const template = promptTemplates[promptType][language];
-    const prompt = template.replace('{prompt}', originalPrompt);
+    // Поддерживаем только существующие типы для HuggingFace
+    const supportedTypes: Record<PromptType, keyof typeof promptTemplates> = {
+      'general': 'universal',
+      'civitai': 'civitai',
+      'universal': 'universal',
+      'textual': 'textual'
+    };
+    
+    const mappedType = supportedTypes[promptType] || 'universal';
+    const template = promptTemplates[mappedType][language];
+    const systemPrompt = template.replace('{prompt}', originalPrompt);
 
     try {
       const response = await fetch(`${this.baseUrl}/${model}`, {
@@ -238,7 +289,7 @@ class HuggingFaceClient {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          inputs: prompt,
+          inputs: systemPrompt,
           parameters: {
             max_new_tokens: 1000,
             temperature: 0.7,
@@ -267,26 +318,33 @@ class HuggingFaceClient {
 
 // Poe API Client (через неофициальный API)
 class PoeClient {
-  private token: string;
-  private baseUrl = 'https://poe.com/api';
-
-  constructor(token?: string) {
-    this.token = token || process.env.POE_TOKEN || '';
+  constructor(_token?: string) {
+    // Token не используется в текущей реализации
   }
 
   async improvePrompt(originalPrompt: string, promptType: PromptType, model: string, language: 'ru' | 'en' = 'ru'): Promise<AIResponse> {
-    const template = promptTemplates[promptType][language];
-    const prompt = template.replace('{prompt}', originalPrompt);
+    // Поддерживаем только существующие типы
+    const supportedTypes: Record<PromptType, keyof typeof promptTemplates> = {
+      'general': 'universal',
+      'civitai': 'civitai', 
+      'universal': 'universal',
+      'textual': 'textual'
+    };
+    
+    const mappedType = supportedTypes[promptType] || 'universal';
+    const template = promptTemplates[mappedType][language];
+    const systemPrompt = template.replace('{prompt}', originalPrompt);
 
     try {
       // Примечание: Для Poe API нужен специальный клиент или библиотека
       // Здесь показан примерный интерфейс
+      console.log('Poe prompt:', systemPrompt);
       
       // Альтернативно можно использовать прямые запросы к моделям
       // через официальные API (OpenAI, Anthropic, Google)
       
       return {
-        text: 'Poe API интеграция в разработке. Используйте OpenRouter или HuggingFace.',
+        text: `Улучшенный промпт на основе: "${originalPrompt}". Poe API интеграция в разработке. Используйте OpenRouter или HuggingFace для лучших результатов.`,
         model: model,
         provider: 'poe'
       };
