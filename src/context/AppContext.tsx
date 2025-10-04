@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { 
   AppState, 
   TabType, 
@@ -32,6 +32,8 @@ interface AppContextType extends AppState {
   // Аутентификация
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  loginUser: (user: User) => void;
+  logoutUser: () => void;
   
   // Работа с промптами
   improvePrompt: (text: string, type: PromptType, provider: AIProvider, model: string) => Promise<void>;
@@ -402,6 +404,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Simple login/logout methods for ProfileTab compatibility
+  const loginUser = (user: User) => {
+    dispatch({ type: 'LOGIN_USER', payload: user });
+  };
+
+  const logoutUser = () => {
+    dispatch({ type: 'LOGOUT_USER' });
+  };
+
   // Работа с промптами
   const improvePrompt = async (text: string, type: PromptType, provider: AIProvider, model: string) => {
     if (!state.user) {
@@ -737,6 +748,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     updateSettings,
     loginWithGoogle,
     logout,
+    loginUser,
+    logoutUser,
     improvePrompt,
     addHistoryItem,
     clearHistory,

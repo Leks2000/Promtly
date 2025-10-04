@@ -1,6 +1,24 @@
 import { User } from '../types';
 import { databaseService } from './database';
 
+// Google OAuth API types
+declare global {
+  interface Window {
+    google: {
+      accounts: {
+        id: {
+          initialize: (config: any) => void;
+          prompt: () => void;
+          renderButton: (element: HTMLElement, config: any) => void;
+        };
+        oauth2: {
+          initTokenClient: (config: any) => any;
+        };
+      };
+    };
+  }
+}
+
 export interface GoogleAuthResponse {
   access_token: string;
   id_token: string;

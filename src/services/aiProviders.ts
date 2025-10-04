@@ -9,6 +9,32 @@ export interface AIResponse {
 
 // Промпт шаблоны для разных типов улучшения
 export const promptTemplates = {
+  general: {
+    ru: `Улучши этот промпт, сделав его более эффективным и понятным:
+
+Оригинальный промпт: "{prompt}"
+
+Улучшенный промпт должен:
+1. Быть четким и конкретным
+2. Содержать все необходимые детали
+3. Быть структурированным и логичным
+4. Подходить для общего использования
+
+Верни только улучшенный промпт.`,
+
+    en: `Improve this prompt to make it more effective and clear:
+
+Original prompt: "{prompt}"
+
+The improved prompt should:
+1. Be clear and specific
+2. Contain all necessary details
+3. Be structured and logical
+4. Suitable for general use
+
+Return only the improved prompt.`
+  },
+
   civitai: {
     ru: `Ты - эксперт по генерации изображений в Stable Diffusion и Civitai. 
 Улучши этот промпт для создания изображения, сделай его более детальным и специфичным:

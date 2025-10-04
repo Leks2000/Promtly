@@ -13,13 +13,12 @@ import {
   List
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { getTranslation } from '../../utils/translations';
+
 import { FavoritePrompt, PromptType } from '../../types';
 
 const FavoritesTab: React.FC = () => {
   const { 
     favorites, 
-    settings, 
     loadFavorites, 
     removeFromFavorites,
     sharePrompt,
@@ -31,7 +30,7 @@ const FavoritesTab: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showAddDialog, setShowAddDialog] = useState(false);
+
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {

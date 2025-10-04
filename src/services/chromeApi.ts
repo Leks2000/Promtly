@@ -53,7 +53,7 @@ export class ChromeApiService {
 
   // Check if running in Chrome extension context
   static isExtensionContext(): boolean {
-    return typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id;
+    return typeof chrome !== 'undefined' && chrome.runtime && Boolean(chrome.runtime.id);
   }
 
   // Check if APIs are available

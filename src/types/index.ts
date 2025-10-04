@@ -24,6 +24,9 @@ export interface PromptHistoryItem {
   tokensUsed?: number;
 }
 
+// Alias for backward compatibility
+export type HistoryItem = PromptHistoryItem;
+
 export interface FavoritePrompt {
   id: string;
   userId: string;
@@ -37,7 +40,7 @@ export interface FavoritePrompt {
 
 export type AIProvider = 'openrouter' | 'poe' | 'huggingface';
 
-export type PromptType = 'civitai' | 'universal' | 'textual' | 'general' | 'flux' | 'stable-diffusion';
+export type PromptType = 'civitai' | 'universal' | 'textual' | 'general' | 'flux' | 'stableDiffusion';
 
 export type Language = 'en' | 'ru';
 
@@ -106,7 +109,7 @@ export interface ImageAnalysis {
     flux: string;
     stableDiffusion: string;
   };
-  promptType: 'general' | 'flux' | 'stable-diffusion';
+  promptType: 'general' | 'flux' | 'stableDiffusion';
   createdAt: Date;
   isFavorite: boolean;
 }

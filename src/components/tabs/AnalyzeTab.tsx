@@ -1,10 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Upload, Image, Sparkles, Copy, Heart, Share2, Download, AlertCircle, CheckCircle } from 'lucide-react';
-import { PromptType } from '../../types';
+import { Upload, Image, Sparkles, Copy, Heart, Share2, AlertCircle, CheckCircle } from 'lucide-react';
 import { ImageAnalysisService } from '../../services/imageAnalysis';
 
-const PROMPT_TYPE_OPTIONS: { value: 'general' | 'flux' | 'stable-diffusion', label: string, description: string }[] = [
+const PROMPT_TYPE_OPTIONS: { value: 'general' | 'flux' | 'stableDiffusion', label: string, description: string }[] = [
   {
     value: 'general',
     label: 'General Image Prompt',
@@ -16,7 +15,7 @@ const PROMPT_TYPE_OPTIONS: { value: 'general' | 'flux' | 'stable-diffusion', lab
     description: 'Optimized for state-of-the-art Flux AI models, concise natural language'
   },
   {
-    value: 'stable-diffusion',
+    value: 'stableDiffusion',
     label: 'Stable Diffusion',
     description: 'Formatted for Stable Diffusion models'
   }
@@ -39,7 +38,7 @@ export default function AnalyzeTab() {
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedPromptType, setSelectedPromptType] = useState<'general' | 'flux' | 'stable-diffusion'>('general');
+  const [selectedPromptType, setSelectedPromptType] = useState<'general' | 'flux' | 'stableDiffusion'>('general');
   const [generatedPrompts, setGeneratedPrompts] = useState<{
     general: string;
     flux: string;
@@ -137,11 +136,11 @@ export default function AnalyzeTab() {
     }
   };
 
-  const handleAddToFavorites = async (promptType: 'general' | 'flux' | 'stable-diffusion') => {
+  const handleAddToFavorites = async (promptType: 'general' | 'flux' | 'stableDiffusion') => {
     if (!generatedPrompts || !selectedImage) return;
     
     try {
-      const promptContent = generatedPrompts[promptType === 'stable-diffusion' ? 'stableDiffusion' : promptType];
+      const promptContent = generatedPrompts[promptType];
       
       await addToFavoritesHandler({
         title: `${promptType.charAt(0).toUpperCase() + promptType.slice(1)} Image Prompt`,
@@ -352,7 +351,7 @@ export default function AnalyzeTab() {
                       {analysis.promptType.charAt(0).toUpperCase() + analysis.promptType.slice(1)} Prompt
                     </p>
                     <p className="text-sm text-gray-500 truncate">
-                      {analysis.generatedPrompts[analysis.promptType]}
+                      {analysis.generatedPrompts[analysis.promptType as keyof typeof analysis.generatedPrompts]}
                     </p>
                     <p className="text-xs text-gray-400 mt-1">
                       {new Date(analysis.createdAt).toLocaleDateString()}

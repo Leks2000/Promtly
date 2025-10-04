@@ -1,7 +1,6 @@
 import { PromptHistoryItem, FavoritePrompt, User, ShareablePrompt } from '../types';
 
 export class DatabaseService {
-  private baseUrl = '';
   
   // Инициализация схем таблиц
   async initializeTables() {

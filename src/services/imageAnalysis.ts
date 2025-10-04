@@ -1,4 +1,4 @@
-import { ImageAnalysis } from '../types';
+
 
 /**
  * Сервис для анализа изображений с помощью бесплатных AI моделей
@@ -200,8 +200,7 @@ export class ImageAnalysisService {
     flux: string;
     stableDiffusion: string;
   } {
-    // Базовые ключевые слова из анализа
-    const baseDescription = analysis.toLowerCase();
+
     
     // General Image Prompt - естественный язык
     const general = this.generateGeneralPrompt(analysis);
