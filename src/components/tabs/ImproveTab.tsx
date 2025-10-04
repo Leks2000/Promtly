@@ -59,7 +59,7 @@ const ImproveTab: React.FC = () => {
       icon: MessageSquare,
       title: 'Текстовый',
       description: 'Для ChatGPT, Claude, Gemini',
-      color: 'from-purple-500 to-indigo-500'
+      color: 'from-emerald-500 to-teal-500'
     }
   ];
 
@@ -256,7 +256,7 @@ const ImproveTab: React.FC = () => {
         <button
           onClick={handleImprove}
           disabled={!inputText.trim() || isLoading || !selectedModel}
-          className="flex items-center justify-center space-x-2 w-full py-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-600 dark:disabled:to-gray-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-[1.02] disabled:hover:scale-100 disabled:cursor-not-allowed font-medium"
+          className="flex items-center justify-center space-x-2 w-full py-4 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-600 dark:disabled:to-gray-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-[1.02] disabled:hover:scale-100 disabled:cursor-not-allowed font-medium"
         >
           {isLoading ? (
             <>
@@ -303,7 +303,7 @@ const ImproveTab: React.FC = () => {
                 
                 <button
                   onClick={handleShare}
-                  className="flex items-center space-x-1 px-3 py-1 text-sm text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-all duration-200"
+                  className="flex items-center space-x-1 px-3 py-1 text-sm text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200"
                   title="Поделиться"
                 >
                   <Share className="w-4 h-4" />
@@ -311,7 +311,7 @@ const ImproveTab: React.FC = () => {
               </div>
             </div>
             
-            <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+            <div className="p-4 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-200 dark:border-teal-800 rounded-xl">
               <p className="text-sm text-gray-900 dark:text-white whitespace-pre-wrap leading-relaxed">
                 {outputText}
               </p>
