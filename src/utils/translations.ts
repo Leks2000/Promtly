@@ -3,6 +3,7 @@ import { Language } from '../types';
 export const translations = {
   en: {
     improve: 'Improve Prompt',
+    analyze: 'Analyze Image',
     history: 'History',
     favorites: 'Favorites',
     settings: 'Settings',
@@ -47,6 +48,7 @@ export const translations = {
   },
   ru: {
     improve: 'Улучшить Промпт',
+    analyze: 'Анализ Изображений',
     history: 'История',
     favorites: 'Избранное',
     settings: 'Настройки',

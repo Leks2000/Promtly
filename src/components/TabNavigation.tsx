@@ -1,6 +1,7 @@
 import React from 'react';
 import { 
   Sparkles, 
+  Image,
   History, 
   Heart, 
   Settings, 
@@ -18,6 +19,7 @@ const TabNavigation: React.FC = () => {
 
   const tabs = [
     { id: 'improve' as TabType, icon: Sparkles, labelKey: 'improve' as const },
+    { id: 'analyze' as TabType, icon: Image, labelKey: 'analyze' as const },
     { id: 'history' as TabType, icon: History, labelKey: 'history' as const },
     { id: 'favorites' as TabType, icon: Heart, labelKey: 'favorites' as const },
     { id: 'settings' as TabType, icon: Settings, labelKey: 'settings' as const },

@@ -1,0 +1,25 @@
+# 🎉 AI Prompt Improver - Установка завершена!
+
+## 📦 Файлы расширения готовы в папке ./dist/
+
+### 🔧 Установка в Chrome:
+1. Откройте Chrome и перейдите на chrome://extensions/
+2. Включите "Режим разработчика" (Developer mode)
+3. Нажмите "Загрузить распакованное расширение" (Load unpacked)
+4. Выберите папку ./dist/
+
+### ⚙️ Первоначальная настройка:
+1. Настройте API ключи в .env файле (см. .env.example)
+2. Обновите Google Client ID в manifest.json
+3. Пересоберите расширение: npm run build:extension
+
+### 📖 Документация:
+- README.md - основная документация
+- INSTALLATION.md - подробное руководство по установке  
+- DEVELOPMENT.md - руководство для разработчиков
+
+### 🆘 Поддержка:
+- GitHub Issues: https://github.com/your-username/ai-prompt-improver/issues
+- Email: support@ai-prompt-improver.com
+
+Удачного использования! 🚀

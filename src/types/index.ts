@@ -37,13 +37,13 @@ export interface FavoritePrompt {
 
 export type AIProvider = 'openrouter' | 'poe' | 'huggingface';
 
-export type PromptType = 'civitai' | 'universal' | 'textual';
+export type PromptType = 'civitai' | 'universal' | 'textual' | 'general' | 'flux' | 'stable-diffusion';
 
 export type Language = 'en' | 'ru';
 
 export type Theme = 'light' | 'dark';
 
-export type TabType = 'improve' | 'history' | 'favorites' | 'settings' | 'profile';
+export type TabType = 'improve' | 'analyze' | 'history' | 'favorites' | 'settings' | 'profile';
 
 export interface AIModel {
   id: string;
@@ -96,12 +96,28 @@ export interface ShareablePrompt {
   createdAt: Date;
 }
 
+export interface ImageAnalysis {
+  id: string;
+  userId: string;
+  imageUrl: string;
+  originalPrompt?: string;
+  generatedPrompts: {
+    general: string;
+    flux: string;
+    stableDiffusion: string;
+  };
+  promptType: 'general' | 'flux' | 'stable-diffusion';
+  createdAt: Date;
+  isFavorite: boolean;
+}
+
 export interface AppState {
   currentTab: TabType;
   user: User | null;
   isLoggedIn: boolean;
   history: PromptHistoryItem[];
   favorites: FavoritePrompt[];
+  imageAnalyses: ImageAnalysis[];
   settings: AppSettings;
   isLoading: boolean;
   error: string | null;

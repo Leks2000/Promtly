@@ -10,13 +10,15 @@ import {
   AIProvider,
   PromptType,
   AIModel,
-  SearchFilters
+  SearchFilters,
+  ImageAnalysis
 } from '../types';
 import { ChromeApiService } from '../services/chromeApi';
 import { authService } from '../services/auth';
 import { databaseService } from '../services/database';
 import { aiService } from '../services/aiProviders';
 import { sharingService } from '../services/sharing';
+import { LocalStorageService } from '../services/localStorage';
 
 interface AppContextType extends AppState {
   // Навигация
@@ -57,6 +59,13 @@ interface AppContextType extends AppState {
   selectModel: (model: AIModel) => void;
   getAvailableModels: () => AIModel[];
   
+  // Анализ изображений
+  analyzeImage: (imageFile: File) => Promise<ImageAnalysis>;
+  addImageAnalysis: (analysis: Omit<ImageAnalysis, 'id' | 'userId' | 'createdAt'>) => Promise<void>;
+  
+  // Проверка дубликатов
+  checkDuplicate: (content: string, type: 'favorite' | 'history') => Promise<boolean>;
+  
   // Утилиты
   copyToClipboard: (text: string) => Promise<boolean>;
   setLoading: (loading: boolean) => void;
@@ -82,7 +91,9 @@ type AppAction =
   | { type: 'SELECT_MODEL'; payload: AIModel }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'LOAD_STATE'; payload: Partial<AppState> };
+  | { type: 'LOAD_STATE'; payload: Partial<AppState> }
+  | { type: 'SET_IMAGE_ANALYSES'; payload: ImageAnalysis[] }
+  | { type: 'ADD_IMAGE_ANALYSIS'; payload: ImageAnalysis };
 
 const initialState: AppState = {
   currentTab: 'improve',
@@ -90,6 +101,7 @@ const initialState: AppState = {
   isLoggedIn: false,
   history: [],
   favorites: [],
+  imageAnalyses: [],
   settings: {
     theme: 'light',
     language: 'ru',
@@ -233,6 +245,15 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'LOAD_STATE':
       return { ...state, ...action.payload };
     
+    case 'SET_IMAGE_ANALYSES':
+      return { ...state, imageAnalyses: action.payload };
+    
+    case 'ADD_IMAGE_ANALYSIS':
+      return { 
+        ...state, 
+        imageAnalyses: [action.payload, ...state.imageAnalyses]
+      };
+    
     default:
       return state;
   }
@@ -289,6 +310,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (models.length > 0 && !state.selectedModel) {
         dispatch({ type: 'SELECT_MODEL', payload: models[0] });
       }
+      
+      // Если пользователь не авторизован, загружаем локальные данные
+      if (!user) {
+        const [localFavorites, localImageAnalyses] = await Promise.all([
+          LocalStorageService.getFavorites(),
+          LocalStorageService.getImageAnalyses()
+        ]);
+        
+        dispatch({ type: 'SET_FAVORITES', payload: localFavorites });
+        dispatch({ type: 'SET_IMAGE_ANALYSES', payload: localImageAnalyses });
+      }
     } catch (error) {
       console.error('Initialization error:', error);
       setError('Ошибка инициализации приложения');
@@ -307,6 +339,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       dispatch({ type: 'SET_HISTORY', payload: history.data });
       dispatch({ type: 'SET_FAVORITES', payload: favorites });
+      
+      // Load image analyses from local storage
+      const imageAnalyses = await ChromeApiService.getStorage(`imageAnalyses_${userId}`) || [];
+      dispatch({ type: 'SET_IMAGE_ANALYSES', payload: imageAnalyses });
     } catch (error) {
       console.error('Error loading user data:', error);
     }
@@ -461,22 +497,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Избранное
   const addToFavorites = async (item: Omit<FavoritePrompt, 'id' | 'createdAt' | 'usageCount' | 'userId'>) => {
-    if (!state.user) return;
-
     try {
-      const favorite = await databaseService.addFavorite({
-        ...item,
-        userId: state.user.id
-      });
+      // Проверяем дубликаты
+      const isDuplicate = await checkDuplicate(item.content, 'favorite');
+      if (isDuplicate) {
+        throw new Error('Этот промпт уже существует в избранном');
+      }
+      
+      let favorite: FavoritePrompt;
+      
+      if (state.user) {
+        // Авторизованный пользователь - сохраняем в БД
+        favorite = await databaseService.addFavorite({
+          ...item,
+          userId: state.user.id
+        });
+      } else {
+        // Неавторизованный пользователь - сохраняем локально
+        favorite = await LocalStorageService.addFavorite(item);
+      }
+      
       dispatch({ type: 'ADD_FAVORITE', payload: favorite });
     } catch (error) {
       console.error('Add to favorites error:', error);
+      setError(error instanceof Error ? error.message : 'Ошибка добавления в избранное');
     }
   };
 
   const removeFromFavorites = async (id: string) => {
     try {
-      await databaseService.deleteFavorite(id);
+      if (state.user) {
+        await databaseService.deleteFavorite(id);
+      } else {
+        await LocalStorageService.removeFavorite(id);
+      }
       dispatch({ type: 'REMOVE_FAVORITE', payload: id });
     } catch (error) {
       console.error('Remove from favorites error:', error);
@@ -484,10 +538,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const loadFavorites = async () => {
-    if (!state.user) return;
-
     try {
-      const favorites = await databaseService.getUserFavorites(state.user.id);
+      let favorites: FavoritePrompt[];
+      
+      if (state.user) {
+        favorites = await databaseService.getUserFavorites(state.user.id);
+      } else {
+        favorites = await LocalStorageService.getFavorites();
+      }
+      
       dispatch({ type: 'SET_FAVORITES', payload: favorites });
     } catch (error) {
       console.error('Load favorites error:', error);
@@ -567,6 +626,109 @@ export function AppProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_ERROR', payload: error });
   };
 
+  // Анализ изображений
+  const analyzeImage = async (imageFile: File): Promise<ImageAnalysis> => {
+    if (!state.user) {
+      throw new Error('Необходимо войти в систему');
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Convert image to base64
+      const base64Image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(imageFile);
+      });
+
+      // TODO: Replace with actual AI service call
+      // Simulate AI analysis for now
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const mockPrompts = {
+        general: 'A detailed natural language description of the uploaded image with focus on composition, subjects, and visual elements.',
+        flux: 'High-quality digital art, detailed composition, professional lighting, modern style, vibrant colors, sharp focus.',
+        stableDiffusion: 'masterpiece, best quality, ultra detailed, 8k resolution, photorealistic, professional photography, perfect composition, dramatic lighting, vibrant colors, sharp focus, artstation quality'
+      };
+
+      const analysis: ImageAnalysis = {
+        id: Date.now().toString(),
+        userId: state.user.id,
+        imageUrl: base64Image,
+        generatedPrompts: mockPrompts,
+        promptType: 'general',
+        createdAt: new Date(),
+        isFavorite: false
+      };
+
+      return analysis;
+    } catch (error) {
+      console.error('Image analysis error:', error);
+      throw new Error('Ошибка анализа изображения');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addImageAnalysis = async (analysis: Omit<ImageAnalysis, 'id' | 'userId' | 'createdAt'>) => {
+    try {
+      let newAnalysis: ImageAnalysis;
+      
+      if (state.user) {
+        // Авторизованный пользователь - сохраняем в Chrome storage
+        newAnalysis = {
+          ...analysis,
+          id: Date.now().toString(),
+          userId: state.user.id,
+          createdAt: new Date()
+        };
+        
+        // Save to Chrome storage
+        const currentAnalyses = state.imageAnalyses;
+        const updatedAnalyses = [newAnalysis, ...currentAnalyses].slice(0, 50); // Keep only last 50
+        await ChromeApiService.setStorage(`imageAnalyses_${state.user.id}`, updatedAnalyses);
+      } else {
+        // Неавторизованный пользователь - сохраняем локально
+        newAnalysis = await LocalStorageService.addImageAnalysis(analysis);
+      }
+      
+      dispatch({ type: 'ADD_IMAGE_ANALYSIS', payload: newAnalysis });
+    } catch (error) {
+      console.error('Add image analysis error:', error);
+    }
+  };
+
+  // Проверка дубликатов
+  const checkDuplicate = async (content: string, type: 'favorite' | 'history'): Promise<boolean> => {
+    try {
+      if (state.user) {
+        // Для авторизованных пользователей проверяем в локальном состоянии
+        const normalizedContent = content.toLowerCase().trim();
+        
+        if (type === 'favorite') {
+          return state.favorites.some(f => 
+            f.content.toLowerCase().trim() === normalizedContent ||
+            f.title.toLowerCase().trim() === normalizedContent
+          );
+        } else {
+          return state.history.some(h => 
+            h.originalText.toLowerCase().trim() === normalizedContent ||
+            h.improvedText.toLowerCase().trim() === normalizedContent
+          );
+        }
+      } else {
+        // Для неавторизованных пользователей проверяем в localStorage
+        return await LocalStorageService.checkDuplicate(content, type);
+      }
+    } catch (error) {
+      console.error('Check duplicate error:', error);
+      return false;
+    }
+  };
+
   const contextValue: AppContextType = {
     ...state,
     setCurrentTab,
@@ -589,6 +751,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     selectProvider,
     selectModel,
     getAvailableModels,
+    analyzeImage,
+    addImageAnalysis,
+    checkDuplicate,
     copyToClipboard,
     setLoading,
     setError

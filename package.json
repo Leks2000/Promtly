@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Modern Chrome Extension for improving AI prompts with multiple providers and sharing capabilities",
-  "keywords": ["chrome-extension", "ai", "prompts", "openrouter", "huggingface", "react", "typescript"],
+  "keywords": [
+    "chrome-extension",
+    "ai",
+    "prompts",
+    "openrouter",
+    "huggingface",
+    "react",
+    "typescript"
+  ],
   "author": "AI Prompt Improver Team",
   "license": "MIT",
   "homepage": "https://github.com/your-username/ai-prompt-improver",
@@ -25,18 +33,18 @@
     "prepare": "npm run build:extension"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "clsx": "^2.0.0",
     "lucide-react": "^0.263.1",
-    "clsx": "^2.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.243",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "@types/chrome": "^0.0.243",
-    "@vitejs/plugin-react": "^4.0.3",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -44,6 +52,7 @@
     "fs-extra": "^11.1.1",
     "postcss": "^8.4.24",
     "tailwindcss": "^3.3.0",
+    "terser": "^5.44.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   },
