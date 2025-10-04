@@ -12,12 +12,12 @@
     "react",
     "typescript"
   ],
-  "author": "AI Prompt Improver Team",
+  "author": "{brok.303}",
   "license": "MIT",
-  "homepage": "https://github.com/your-username/ai-prompt-improver",
+  "homepage": "https://github.com/Leks2000/Promtly",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/ai-prompt-improver.git"
+    "url": "https://github.com//Leks2000/Promtly.git"
   },
   "scripts": {
     "dev": "vite",

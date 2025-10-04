@@ -4,11 +4,6 @@
   "version": "1.0.0",
   "description": "Улучшение промптов с помощью ИИ. Поддержка OpenRouter, HuggingFace, Poe API. Система избранного, поиск и расшаривание промптов.",
   "author": "AI Prompt Improver Team",
-  "permissions": [
-    "storage",
-    "activeTab",
-    "identity"
-  ],
   "host_permissions": [
     "https://openrouter.ai/*",
     "https://api-inference.huggingface.co/*",
@@ -57,5 +52,10 @@
   "background": {
     "service_worker": "background.js",
     "type": "module"
-  }
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "identity"
+  ]
 }

@@ -44,12 +44,12 @@ export class AuthService {
 
       // Формируем URL для OAuth
       const authUrl = new URL('https://accounts.google.com/o/oauth2/auth');
-      authUrl.searchParams.set('prompt', 'consent');
       authUrl.searchParams.set('access_type', 'online');
       authUrl.searchParams.set('client_id', this.clientId);
       authUrl.searchParams.set('response_type', 'token id_token');
       authUrl.searchParams.set('redirect_uri', this.redirectUri);
       authUrl.searchParams.set('scope', 'openid profile email');
+      authUrl.searchParams.set('prompt', 'consent');
       authUrl.searchParams.set('nonce', this.generateNonce());
 
       // Запускаем OAuth flow
