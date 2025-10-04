@@ -19,15 +19,15 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    width: 400px;
-    height: 600px;
+    width: 450px;
+    height: 650px;
     overflow: hidden;
   }
 }
 
 @layer components {
   .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
   
   .scrollbar-thin::-webkit-scrollbar-track {

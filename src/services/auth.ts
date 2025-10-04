@@ -31,8 +31,8 @@ export interface GoogleAuthResponse {
 }
 
 export class AuthService {
-  private clientId = 'your-google-client-id';
-  private redirectUri = chrome?.identity?.getRedirectURL?.() || 'https://your-extension-id.chromiumapp.org/';
+  private clientId = '1019228620951-nngjcjtnsvgbo07ue4efb92dso9v73hi.apps.googleusercontent.com';
+  private redirectUri = chrome.identity.getRedirectURL();
 
   // Chrome Extension OAuth
   async signInWithGoogle(): Promise<User> {
@@ -43,7 +43,9 @@ export class AuthService {
       }
 
       // Формируем URL для OAuth
-      const authUrl = new URL('https://accounts.google.com/oauth/authorize');
+      const authUrl = new URL('https://accounts.google.com/o/oauth2/auth');
+      authUrl.searchParams.set('prompt', 'consent');
+      authUrl.searchParams.set('access_type', 'online');
       authUrl.searchParams.set('client_id', this.clientId);
       authUrl.searchParams.set('response_type', 'token id_token');
       authUrl.searchParams.set('redirect_uri', this.redirectUri);
