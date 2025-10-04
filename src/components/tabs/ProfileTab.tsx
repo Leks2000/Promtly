@@ -13,6 +13,8 @@ const ProfileTab: React.FC = () => {
       name: 'John Doe',
       email: 'john.doe@gmail.com',
       avatar: `https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=ffffff&size=128`,
+      createdAt: new Date(),
+      lastLoginAt: new Date(),
     };
     loginUser(mockUser);
   };

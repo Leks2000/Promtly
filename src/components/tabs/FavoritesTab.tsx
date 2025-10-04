@@ -32,6 +32,7 @@ const FavoritesTab: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   useEffect(() => {
     if (user) {
