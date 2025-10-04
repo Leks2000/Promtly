@@ -31,19 +31,20 @@ export interface GoogleAuthResponse {
 }
 
 export class AuthService {
-  private clientId = '1019228620951-nngjcjtnsvgbo07ue4efb92dso9v73hi.apps.googleusercontent.com';
+  private clientId = '1019228620951-2lvctsnreemkva94hdmgd661cg1mg24l.apps.googleusercontent.com';
   private redirectUri = chrome.identity.getRedirectURL();
 
   // Chrome Extension OAuth
   async signInWithGoogle(): Promise<User> {
     try {
-      // Проверяем доступность Chrome Identity API
       if (!chrome?.identity) {
+        console.log(chrome.identity.getRedirectURL());
         throw new Error('Chrome Identity API недоступен');
       }
 
-      // Формируем URL для OAuth
-      const authUrl = new URL('https://accounts.google.com/o/oauth2/auth');
+      console.log(chrome.identity.getRedirectURL());
+
+      const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
       authUrl.searchParams.set('access_type', 'online');
       authUrl.searchParams.set('client_id', this.clientId);
       authUrl.searchParams.set('response_type', 'token id_token');
