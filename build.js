@@ -1,8 +1,11 @@
+import { fileURLToPath } from 'url';
+import path from 'path';
 import { build } from 'vite';
-import { resolve } from 'path';
 import fs from 'fs-extra';
 
-const __dirname = new URL('.', import.meta.url).pathname;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+process.chdir(__dirname);
 
 async function buildExtension() {
   console.log('🚀 Building AI Prompt Improver Chrome Extension...');
@@ -17,7 +20,7 @@ async function buildExtension() {
         emptyOutDir: true,
         rollupOptions: {
           input: {
-            popup: resolve(__dirname, 'src/index.html'),
+            popup: path.resolve(__dirname, 'src/index.html'),
           },
           output: {
             entryFileNames: '[name].js',
@@ -36,7 +39,7 @@ async function buildExtension() {
       },
       resolve: {
         alias: {
-          '@': resolve(__dirname, 'src'),
+          '@': path.resolve(__dirname, 'src'),
         },
       },
       define: {

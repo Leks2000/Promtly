@@ -1,22 +1,25 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+// восстанавливаем __dirname
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default defineConfig({
   plugins: [react()],
-  root: 'src',
+  root: path.resolve(__dirname, 'src'), // указываем абсолютный путь
   build: {
-    outDir: '../dist',
+    outDir: path.resolve(__dirname, 'dist-extension'),
     emptyOutDir: true,
     rollupOptions: {
-      input: {
-        popup: resolve(__dirname, 'src/index.html'),
-      },
+      input: path.resolve(__dirname, 'src/index.html'), // абсолютный путь
     },
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
+      '@': path.resolve(__dirname, 'src'),
     },
   },
 })
