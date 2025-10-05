@@ -85,11 +85,25 @@ export class AuthService {
       
       // Проверяем, существует ли пользователь в БД
       let user = await databaseService.getUserByGoogleId(userInfo.id);
+
+      try {
+        const userInfo = await this.getUserInfo(accessToken);
+        console.log('User info:', userInfo);
+      } catch (err) {
+        console.error('getUserInfo failed:', err);
+      }
+      
+      try {
+        let user = await databaseService.getUserByGoogleId(userInfo.id);
+        console.log('User from DB:', user);
+      } catch (err) {
+        console.error('getUserByGoogleId failed:', err);
+      }
       
       if (!user) {
         // Создаем нового пользователя
         user = await databaseService.createUser({
-          googleId: userInfo.id,
+          "googleId": userInfo.id,
           name: userInfo.name,
           email: userInfo.email,
           avatar: userInfo.picture
@@ -146,7 +160,7 @@ export class AuthService {
       
       if (!user) {
         user = await databaseService.createUser({
-          googleId: response.user.id,
+          "googleId": response.user.id,
           name: response.user.name,
           email: response.user.email,
           avatar: response.user.picture

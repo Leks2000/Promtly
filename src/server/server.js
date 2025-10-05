@@ -7,7 +7,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['chrome-extension://ghgmejponghmfeajohdkbknliomndfbh'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Подключение к PostgreSQL
@@ -30,6 +33,23 @@ async function queryDB(sql, params = []) {
 // ======================================================
 //                    USERS
 // ======================================================
+app.post('/table/users', async (req, res) => {
+  const { id, googleId, name, email, avatar, createdAt, lastLoginAt, subscriptionType, subscriptionExpiresAt } = req.body;
+
+  try {
+    const result = await queryDB(
+      `INSERT INTO users 
+        (id, "googleId", name, email, avatar, "createdAt", "lastLoginAt", "subscriptionType", "subscriptionExpiresAt")
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      [id, googleId, name, email, avatar, createdAt, lastLoginAt, subscriptionType, subscriptionExpiresAt]
+    );
+    res.json(result[0]);
+  } catch (err) {
+    console.error('Error creating user:', err);
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+});
+
 app.get('/table/users', async (req, res) => {
     try {
       const search = req.query.search;
@@ -37,7 +57,7 @@ app.get('/table/users', async (req, res) => {
       if (search) {
         // Ищем по googleId (или по email, если нужно)
         const result = await pool.query(
-          'SELECT * FROM users WHERE googleId = $1 OR email = $1',
+          'SELECT * FROM users WHERE "googleId" = $1 OR email = $1',
           [search]
         );
   
@@ -63,7 +83,7 @@ app.get('/table/users', async (req, res) => {
     const setClause = keys.map((k, i) => `${k}=$${i + 1}`).join(', ');
     try {
       const result = await queryDB(
-        `UPDATE users SET ${setClause} WHERE id='${id}' RETURNING *`,
+        `UPDATE users SET ${setClause} WHERE id=$${keys.length+1} RETURNING *`,
         values
       );
       res.json(result[0]);
@@ -137,7 +157,37 @@ app.get('/table/users', async (req, res) => {
       res.status(500).json({ error: 'Failed to delete history item' });
     }
   });
-  
+
+  app.post('/table/prompt_history', async (req, res) => {
+    const item = req.body;
+    try {
+      const result = await pool.query(
+        `INSERT INTO prompt_history 
+          (id, "userId", "originalText", "improvedText", "improvedBy", "promptType", tags, "isFavorite", "isShared", "shareId", timestamp, model, "tokensUsed")
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+        [
+          item.id,
+          item.userId,
+          item.originalText,
+          item.improvedText,
+          item.improvedBy,
+          item.promptType,
+          JSON.stringify(item.tags || []),
+          item.isFavorite,
+          item.isShared,
+          item.shareId,
+          item.timestamp,
+          item.model,
+          item.tokensUsed
+        ]
+      );
+      res.json(result.rows[0]);
+    } catch (err) {
+      console.error('Error creating history item:', err);
+      res.status(500).json({ error: 'Failed to create history item' });
+    }
+  });
+ 
   // ======================================================
   //                 FAVORITES
   // ======================================================
@@ -204,7 +254,31 @@ app.get('/table/users', async (req, res) => {
       res.status(500).json({ error: 'Failed to delete favorite' });
     }
   });
-  
+
+  app.post('/table/favorites', async (req, res) => {
+    const f = req.body;
+    try {
+      const result = await pool.query(
+        `INSERT INTO favorites (id, "userId", title, content, tags, category, "createdAt", "usageCount")
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+        [
+          f.id,
+          f.userId,
+          f.title,
+          f.content,
+          JSON.stringify(f.tags || []),
+          f.category,
+          f.createdAt,
+          f.usageCount
+        ]
+      );
+      res.json(result.rows[0]);
+    } catch (err) {
+      console.error('Error creating favorite:', err);
+      res.status(500).json({ error: 'Failed to create favorite' });
+    }
+  });
+
   // ======================================================
   //                 SHARED PROMPTS
   // ======================================================
@@ -258,6 +332,50 @@ app.get('/table/users', async (req, res) => {
     }
   });
   
+
+
+  // ======================================================
+  //                 TABLE SCHEMA
+  // ======================================================
+  app.post('/table-schema-update', async (req, res) => {
+    const { name, fields } = req.body;
+  
+    try {
+      const columns = fields.map(f => {
+        let type;
+        switch(f.type) {
+          case 'text': 
+          case 'rich_text': 
+            type = 'TEXT'; 
+            break;
+          case 'number': 
+            type = 'INTEGER'; 
+            break;
+          case 'bool': 
+            type = 'BOOLEAN'; 
+            break;
+          case 'datetime': 
+            type = 'TIMESTAMP'; 
+            break;
+          case 'array': 
+            type = 'TEXT[]'; 
+            break;
+          default: 
+            type = 'TEXT';
+        }
+        return `"${f.name}" ${type}`;
+      }).join(', ');
+  
+      const query = `CREATE TABLE IF NOT EXISTS "${name}" (${columns});`;
+      await pool.query(query);
+  
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error creating table:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // ======================================================
   //                 SERVER START
   // ======================================================

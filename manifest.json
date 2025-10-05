@@ -50,7 +50,9 @@
     "storage",
     "activeTab",
     "identity",
+    "https://www.googleapis.com",
     "https://www.googleapis.com/*",
-    "https://accounts.google.com/*"
+    "https://accounts.google.com/*",
+    "https://promtly.onrender.com/*"
   ]
 }

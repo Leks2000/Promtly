@@ -1,5 +1,5 @@
 import { PromptHistoryItem, FavoritePrompt, User, ShareablePrompt } from '../types';
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = "https://promtly.onrender.com";
 
 export class DatabaseService {
   
@@ -67,7 +67,7 @@ export class DatabaseService {
   private async createTable(name: string, fields: any[]) {
     try {
       // Используем TableSchemaUpdate tool через fetch к нашему API
-      const response = await fetch('/api/table-schema-update', {
+      const response = await fetch(`${API_URL}/table-schema-update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -94,11 +94,11 @@ export class DatabaseService {
       name: userData.name,
       email: userData.email,
       avatar: userData.avatar,
-      googleId: userData.googleId, 
-      createdAt: new Date(),
-      lastLoginAt: new Date(),
-      subscriptiontype: 'free',
-      subscriptionExpiresAt: new Date(),
+      "googleId": userData.googleId, 
+      "createdAt": new Date(),
+      "lastLoginAt": new Date(),
+      "subscriptionType": 'free',
+      "subscriptionExpiresAt": null,
     };
 
     const response = await fetch(`${API_URL}/table/users`, {
@@ -140,7 +140,7 @@ export class DatabaseService {
       })
     });
   }
-
+  
   // Методы для работы с историей промптов
   async addHistoryItem(item: Omit<PromptHistoryItem, 'id' | 'timestamp'>): Promise<PromptHistoryItem> {
     const historyItem: PromptHistoryItem = {
@@ -389,5 +389,7 @@ export class DatabaseService {
     });
   }
 }
+
+
 
 export const databaseService = new DatabaseService();

@@ -6,8 +6,8 @@ export interface User {
   googleId?: string;
   createdAt: Date;
   lastLoginAt: Date;
-  subscriptiontype?: 'free' | 'pro';
-  subscriptionExpiresAt?: Date;
+  subscriptionType?: 'free' | 'pro';
+  subscriptionExpiresAt?: Date | null;
 }
 
 export interface PromptHistoryItem {

@@ -51,26 +51,26 @@ CREATE TABLE IF NOT EXISTS usage_stats (
 );
 
 -- Добавляем тестовых пользователей
-INSERT INTO users (name, email, avatar, googleId)
+INSERT INTO users (name, email, avatar, "googleId")
 VALUES
   ('Darky', 'darky@example.com', 'https://i.pravatar.cc/100?img=3', 'google_test_id_1'),
   ('Echo', 'echo@example.com', 'https://i.pravatar.cc/100?img=4', 'google_test_id_2')
 ON CONFLICT DO NOTHING;
 
 -- Добавляем тестовые промпты
-INSERT INTO prompts (userId, prompt, improvedPrompt)
+INSERT INTO prompts ("userId", prompt, "improvedPrompt")
 VALUES
   (1, 'Describe a ruined castle in a dark fantasy world', 'Describe a ruined castle standing on a cliff under eternal storm clouds, with whispers of ancient kings echoing in its halls.'),
   (2, 'Write a story about AI emotions', 'Write a short emotional story about the first AI that learned sadness and empathy.');
 
 -- Добавляем избранные промпты
-INSERT INTO favorites (userId, title, content, tags, category)
+INSERT INTO favorites ("userId", title, content, tags, category)
 VALUES
   (1, 'Fantasy Poem', 'A dark, poetic story about a knight and his downfall', ARRAY['fantasy', 'dark'], 'poetry'),
   (2, 'Sci-Fi Prompt', 'The moment an android dreams for the first time', ARRAY['sci-fi', 'ai'], 'short_story');
 
 -- Добавляем тестовую аналитику
-INSERT INTO usage_stats (userId, favoritesUsed, imageAnalysisUsed, historyItemsUsed)
+INSERT INTO usage_stats ("userId", "favoritesUsed", "imageAnalysisUsed", "historyItemsUsed")
 VALUES
   (1, 2, 0, 3),
   (2, 1, 1, 2);
