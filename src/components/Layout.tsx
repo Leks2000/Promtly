@@ -29,18 +29,22 @@ const Layout: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-900 dark:to-slate-800 transition-colors duration-200">
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
       {/* Основной контент */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <MainContent />
       </div>
       
       {/* Sidebar справа */}
-      <div className="flex flex-col">
+      <div className="flex flex-col w-20 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700">
         {/* Навигация */}
-        <TabNavigation />
-        
-        {/* Реклама внизу */}
+        <div className="flex-1">
+          <TabNavigation />
+        </div>
+      </div>
+
+      {/* Реклама внизу на всю ширину */}
+      <div className="fixed bottom-0 left-0 right-0 z-10">
         <AdBanner />
       </div>
 

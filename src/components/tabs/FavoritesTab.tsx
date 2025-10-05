@@ -119,12 +119,12 @@ const FavoritesTab: React.FC = () => {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="p-6 space-y-6">
+      <div className="p-4 space-y-4">
         {/* Заголовок */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center space-x-2">
             <Heart className="w-6 h-6 text-red-500" />
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
               Избранное
             </h1>
             <span className="text-sm text-gray-500 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">

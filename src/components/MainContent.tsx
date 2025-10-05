@@ -31,7 +31,7 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col bg-transparent transition-colors duration-200 overflow-hidden">
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden pb-16">
         <div className="h-full">
           {renderTab()}
         </div>
