@@ -10,20 +10,17 @@ const Layout: React.FC = () => {
   const { isLoading, error } = useApp();
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      {/* Основной контент */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Контентная область */}
-        <div className="flex-1 flex flex-col">
-          <MainContent />
-          
-          {/* Реклама внизу */}
-          <AdBanner />
-        </div>
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      {/* Контентная область */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <MainContent />
         
-        {/* Навигация справа */}
-        <TabNavigation />
+        {/* Реклама внизу */}
+        <AdBanner />
       </div>
+      
+      {/* Навигация справа - всегда видимая */}
+      <TabNavigation />
 
       {/* Загрузка и ошибки */}
       {isLoading && <LoadingSpinner />}

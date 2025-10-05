@@ -21,7 +21,8 @@ export class AuthService {
     try {
       // Проверяем доступность Chrome Identity API
       if (!chrome?.identity) {
-        throw new Error('Chrome Identity API недоступен');
+        // Fallback к web авторизации
+        return await this.signInWithGoogleWeb();
       }
 
       // Формируем URL для OAuth
@@ -62,21 +63,8 @@ export class AuthService {
       // Получаем информацию о пользователе
       const userInfo = await this.getUserInfo(accessToken);
       
-      // Проверяем, существует ли пользователь в БД
-      let user = await databaseService.getUserByGoogleId(userInfo.id);
-      
-      if (!user) {
-        // Создаем нового пользователя
-        user = await databaseService.createUser({
-          googleId: userInfo.id,
-          name: userInfo.name,
-          email: userInfo.email,
-          avatar: userInfo.picture
-        });
-      } else {
-        // Обновляем время последнего входа
-        await databaseService.updateUserLastLogin(user.id);
-      }
+      // Создаем пользователя с mock данными для демо
+      const user = await this.createMockUser(userInfo);
 
       // Сохраняем токены
       await this.saveTokens(accessToken, idToken);
@@ -84,14 +72,18 @@ export class AuthService {
       return user;
     } catch (error) {
       console.error('Google Auth error:', error);
-      throw new Error(`Ошибка авторизации: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
+      // Fallback к web авторизации при ошибке
+      return await this.signInWithGoogleWeb();
     }
   }
 
   // Альтернативный метод для обычной веб-авторизации (fallback)
   async signInWithGoogleWeb(): Promise<User> {
     try {
-      // Используем Google Identity Services для веб-приложений
+      // Загружаем Google API если нужно
+      await this.loadGoogleAPI();
+
+      // Инициализируем Google Identity Services
       const response = await new Promise<GoogleAuthResponse>((resolve, reject) => {
         if (typeof window.google === 'undefined') {
           reject(new Error('Google Identity Services не загружен'));
@@ -120,19 +112,8 @@ export class AuthService {
         }).requestAccessToken();
       });
 
-      // Обрабатываем пользователя аналогично Chrome Extension flow
-      let user = await databaseService.getUserByGoogleId(response.user.id);
-      
-      if (!user) {
-        user = await databaseService.createUser({
-          googleId: response.user.id,
-          name: response.user.name,
-          email: response.user.email,
-          avatar: response.user.picture
-        });
-      } else {
-        await databaseService.updateUserLastLogin(user.id);
-      }
+      // Создаем пользователя с mock данными для демо
+      const user = await this.createMockUser(response.user);
 
       await this.saveTokens(response.access_token, response.id_token);
       
@@ -141,6 +122,22 @@ export class AuthService {
       console.error('Google Web Auth error:', error);
       throw new Error(`Ошибка веб-авторизации: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
     }
+  }
+
+  // Создание mock пользователя для демо
+  private async createMockUser(userInfo: any): Promise<User> {
+    const user: User = {
+      id: userInfo.id || 'demo_user_' + Date.now(),
+      name: userInfo.name || 'Demo User',
+      email: userInfo.email || 'demo@example.com',
+      avatar: userInfo.picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.name || 'Demo User')}&background=10b981&color=ffffff&size=128`,
+      googleId: userInfo.id || 'demo_google_id',
+      createdAt: new Date(),
+      lastLoginAt: new Date(),
+      isPro: false
+    };
+
+    return user;
   }
 
   // Получение информации о пользователе через Google API
@@ -286,17 +283,17 @@ export class AuthService {
         return null;
       }
 
-      // Получаем информацию о пользователе
-      const userInfo = await this.getUserInfo(accessToken);
-      
-      // Ищем пользователя в БД
-      const user = await databaseService.getUserByGoogleId(userInfo.id);
-      if (user) {
-        await databaseService.updateUserLastLogin(user.id);
+      // Пробуем получить информацию о пользователе
+      try {
+        const userInfo = await this.getUserInfo(accessToken);
+        const user = await this.createMockUser(userInfo);
         return user;
+      } catch (fetchError) {
+        // Если не удалось получить данные пользователя, возвращаем null
+        console.warn('Failed to fetch user info, user will need to re-login');
+        await this.signOut(); // Очищаем токены
+        return null;
       }
-
-      return null;
     } catch (error) {
       console.error('Auto sign-in error:', error);
       // Если что-то пошло не так, очищаем токены

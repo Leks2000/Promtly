@@ -35,16 +35,20 @@ const TabNavigation: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-16 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 transition-colors duration-200">
+    <div className="flex flex-col w-64 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 shadow-lg">
       {/* Верхняя часть - логотип */}
-      <div className="flex flex-col items-center py-3">
-        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl mb-4 shadow-lg">
+      <div className="flex items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-md mr-3">
           <Zap className="w-6 h-6 text-white" />
+        </div>
+        <div>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">AI Prompt</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Improver</p>
         </div>
       </div>
 
       {/* Основная навигация */}
-      <nav className="flex flex-col items-center space-y-1 flex-1 px-2">
+      <nav className="flex-1 px-4 py-6 space-y-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
@@ -53,26 +57,25 @@ const TabNavigation: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setCurrentTab(tab.id)}
-              title={getTranslation(tab.labelKey, settings.language)}
               className={clsx(
-                'group relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-200',
-                'hover:scale-105 hover:shadow-md',
+                'w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 text-left group',
                 {
-                  'bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25': isActive,
-                  'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200': !isActive,
+                  'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800': isActive,
+                  'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200': !isActive,
                 }
               )}
             >
-              <Icon className="w-5 h-5" />
-              
-              {/* Tooltip */}
-              <div className="absolute right-full mr-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+              <Icon className={clsx('w-5 h-5 mr-3', {
+                'text-emerald-600 dark:text-emerald-400': isActive,
+                'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300': !isActive
+              })} />
+              <span className="font-medium">
                 {getTranslation(tab.labelKey, settings.language)}
-              </div>
-
-              {/* Активный индикатор слева */}
+              </span>
+              
+              {/* Активный индикатор справа */}
               {isActive && (
-                <div className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-600 rounded-r-full" />
+                <div className="ml-auto w-2 h-2 bg-emerald-500 rounded-full" />
               )}
             </button>
           );
@@ -80,42 +83,41 @@ const TabNavigation: React.FC = () => {
       </nav>
 
       {/* Нижняя часть - профиль и выход */}
-      <div className="flex flex-col items-center py-3 space-y-1">
-        {isLoggedIn && user && (
-          <>
-            {/* Аватар пользователя */}
+      <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+        {isLoggedIn && user ? (
+          <div className="space-y-3">
+            {/* Профиль пользователя */}
             <button
               onClick={() => setCurrentTab('profile')}
-              className="relative group"
-              title={user.name}
+              className="w-full flex items-center px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
             >
               <img
-                src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=3b82f6&color=ffffff&size=40`}
+                src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=10b981&color=ffffff&size=40`}
                 alt={user.name}
-                className="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600 hover:border-blue-500 transition-all duration-200"
+                className="w-10 h-10 rounded-full border-2 border-emerald-200 dark:border-emerald-700"
               />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
-              
-              {/* Tooltip */}
-              <div className="absolute right-full mr-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
-                {user.name}
+              <div className="ml-3 text-left flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
               </div>
+              <div className="w-2 h-2 bg-green-500 rounded-full ml-2" />
             </button>
 
             {/* Кнопка выхода */}
             <button
               onClick={handleLogout}
-              title={getTranslation('logout', settings.language)}
-              className="group flex items-center justify-center w-10 h-10 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
+              className="w-full flex items-center px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
             >
-              <LogOut className="w-4 h-4" />
-              
-              {/* Tooltip */}
-              <div className="absolute right-full mr-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
-                {getTranslation('logout', settings.language)}
-              </div>
+              <LogOut className="w-4 h-4 mr-3" />
+              <span className="text-sm font-medium">{getTranslation('logout', settings.language)}</span>
             </button>
-          </>
+          </div>
+        ) : (
+          <div className="text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+              Войдите для доступа ко всем функциям
+            </p>
+          </div>
         )}
       </div>
     </div>
