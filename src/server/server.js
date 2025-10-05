@@ -18,7 +18,7 @@ const pool = new Pool({
 // ----------- ЭНДПОИНТЫ -----------
 
 // GET /users
-app.get('/users', async (req, res) => {
+app.get('/table/users', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM users ORDER BY id');
     res.json(result.rows);
@@ -29,7 +29,7 @@ app.get('/users', async (req, res) => {
 });
 
 // GET /prompts
-app.get('/prompts', async (req, res) => {
+app.get('/table/prompts', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM prompts ORDER BY id');
     res.json(result.rows);
@@ -40,7 +40,7 @@ app.get('/prompts', async (req, res) => {
 });
 
 // GET /favorites
-app.get('/favorites', async (req, res) => {
+app.get('/table/favorites', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM favorites ORDER BY id');
     res.json(result.rows);
@@ -51,7 +51,7 @@ app.get('/favorites', async (req, res) => {
 });
 
 // GET /image-analysis
-app.get('/image-analysis', async (req, res) => {
+app.get('/table/image-analysis', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM image_analysis ORDER BY id');
     res.json(result.rows);
@@ -62,7 +62,7 @@ app.get('/image-analysis', async (req, res) => {
 });
 
 // POST /users
-app.post('/users', async (req, res) => {
+app.post('/table/users', async (req, res) => {
   const { name, email, avatar, googleId } = req.body;
   try {
     const result = await pool.query(
@@ -78,7 +78,7 @@ app.post('/users', async (req, res) => {
 });
 
 // POST /prompts
-app.post('/prompts', async (req, res) => {
+app.post('/table/prompts', async (req, res) => {
   const { userId, prompt, improvedPrompt } = req.body;
   try {
     const result = await pool.query(
@@ -94,7 +94,7 @@ app.post('/prompts', async (req, res) => {
 });
 
 // POST /favorites
-app.post('/favorites', async (req, res) => {
+app.post('/table/favorites', async (req, res) => {
   const { userId, title, content, tags, category } = req.body;
   try {
     const result = await pool.query(
@@ -110,7 +110,7 @@ app.post('/favorites', async (req, res) => {
 });
 
 // POST /image-analysis
-app.post('/image-analysis', async (req, res) => {
+app.post('/table/image-analysis', async (req, res) => {
   const { userId, imageUrl, originalPrompt, generatedPrompts, promptType, isFavorite } = req.body;
   try {
     const result = await pool.query(
