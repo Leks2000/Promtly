@@ -33,22 +33,25 @@ async function queryDB(sql, params = []) {
 // ======================================================
 //                    USERS
 // ======================================================
+// POST /table/users
 app.post('/table/users', async (req, res) => {
-  const { id, googleId, name, email, avatar, createdAt, lastLoginAt, subscriptionType, subscriptionExpiresAt } = req.body;
-
   try {
-    const result = await queryDB(
-      `INSERT INTO users 
-        (id, "googleId", name, email, avatar, "createdAt", "lastLoginAt", "subscriptionType", "subscriptionExpiresAt")
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-      [id, googleId, name, email, avatar, createdAt, lastLoginAt, subscriptionType, subscriptionExpiresAt]
+    const { name, email, avatar, googleId, subscriptionType, subscriptionExpiresAt } = req.body;
+
+    const result = await pool.query(
+      `INSERT INTO users (name, email, avatar, "googleId", "subscriptionType", "subscriptionExpiresAt")
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [name, email, avatar, googleId, subscriptionType || 'free', subscriptionExpiresAt || null]
     );
-    res.json(result[0]);
+
+    res.json(result.rows[0]);
   } catch (err) {
     console.error('Error creating user:', err);
-    res.status(500).json({ error: 'Failed to create user' });
+    res.status(500).json({ error: err.message });
   }
 });
+
 
 app.get('/table/users', async (req, res) => {
     try {
