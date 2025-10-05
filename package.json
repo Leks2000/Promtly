@@ -2,7 +2,7 @@
   "name": "ai-prompt-improver",
   "version": "1.0.0",
   "type": "module",
-  "main": "server.js",
+  "main": "server/server.js",
   "description": "Modern Chrome Extension for improving AI prompts with multiple providers and sharing capabilities",
   "keywords": [
     "chrome-extension",
@@ -21,7 +21,7 @@
     "url": "https://github.com//Leks2000/Promtly.git"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node server/server.js",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
