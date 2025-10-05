@@ -41,7 +41,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
+              <div className="p-2 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl">
                 <Crown className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -65,15 +65,15 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
         {/* Content */}
         <div className="p-6">
           {/* Limit notification */}
-          <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
-            <div className="flex items-center space-x-2 text-amber-700 dark:text-amber-300">
+          <div className="mb-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-xl">
+            <div className="flex items-center space-x-2 text-indigo-700 dark:text-indigo-300">
               <Zap className="w-5 h-5" />
               <span className="font-medium">Лимит достигнут</span>
             </div>
-            <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
+            <p className="mt-2 text-sm text-indigo-600 dark:text-indigo-400">
               {feature}: {currentUsage}/{limit}
             </p>
-            <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+            <p className="mt-1 text-xs text-indigo-600 dark:text-indigo-400">
               Обновитесь до Pro для получения безлимитного доступа
             </p>
           </div>
@@ -98,11 +98,11 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
           </div>
 
           {/* Pricing */}
-          <div className="mb-6 p-4 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-200 dark:border-teal-800 rounded-xl text-center">
-            <div className="text-2xl font-bold text-teal-700 dark:text-teal-300">
+          <div className="mb-6 p-4 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-200 dark:border-indigo-800 rounded-xl text-center">
+            <div className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">
               $9.99
             </div>
-            <div className="text-sm text-teal-600 dark:text-teal-400">
+            <div className="text-sm text-indigo-600 dark:text-indigo-400">
               разовая покупка • навсегда
             </div>
           </div>
@@ -117,7 +117,7 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
             </button>
             <button
               onClick={handleUpgrade}
-              className="flex-1 px-4 py-2 bg-gradient-to-br from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
+              className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl transition-all duration-200 shadow-lg"
             >
               Перейти на Pro
             </button>

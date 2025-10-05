@@ -5,7 +5,6 @@ import {
   Check, 
   Save, 
   Share,
-  Settings,
   Zap,
   Image,
   MessageSquare,
@@ -37,29 +36,29 @@ const ImproveTab: React.FC = () => {
   const [outputText, setOutputText] = useState('');
   const [selectedType, setSelectedType] = useState<PromptType>('universal');
   const [isCopied, setIsCopied] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+
 
   const promptTypes = [
     {
       id: 'civitai' as PromptType,
       icon: Image,
-      title: 'Civitai',
-      description: 'Для генерации изображений в Stable Diffusion',
+      title: 'Изображения',
+      description: 'SD, Midjourney',
       color: 'from-pink-500 to-rose-500'
     },
     {
       id: 'universal' as PromptType,
       icon: Layers,
       title: 'Универсальный',
-      description: 'Для любых задач и ИИ моделей',
-      color: 'from-blue-500 to-cyan-500'
+      description: 'Любые задачи',
+      color: 'from-indigo-500 to-blue-500'
     },
     {
       id: 'textual' as PromptType,
       icon: MessageSquare,
-      title: 'Текстовый',
-      description: 'Для ChatGPT, Claude, Gemini',
-      color: 'from-emerald-500 to-teal-500'
+      title: 'Текст',
+      description: 'ChatGPT, Claude',
+      color: 'from-blue-500 to-indigo-600'
     }
   ];
 
@@ -140,73 +139,14 @@ const ImproveTab: React.FC = () => {
   return (
     <div className="flex flex-col h-full p-4 space-y-4">
       {/* Заголовок */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Sparkles className="w-6 h-6 text-blue-500" />
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {getTranslation('improvePrompt', settings.language)}
-          </h1>
-        </div>
-        
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
-        >
-          <Settings className="w-5 h-5" />
-        </button>
+      <div className="flex items-center space-x-2">
+        <Sparkles className="w-6 h-6 text-indigo-500" />
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+          {getTranslation('improvePrompt', settings.language)}
+        </h1>
       </div>
 
-      {/* Настройки ИИ */}
-      {showSettings && (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-4">
-          <h3 className="font-medium text-gray-900 dark:text-white">Настройки ИИ</h3>
-          
-          {/* Выбор провайдера */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Провайдер ИИ
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {providers.map((provider) => (
-                <button
-                  key={provider.id}
-                  onClick={() => selectProvider(provider.id)}
-                  className={`p-2 text-xs rounded-lg transition-all duration-200 ${
-                    selectedProvider === provider.id
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                  }`}
-                >
-                  {provider.name}
-                  {provider.free && <span className="block text-xs opacity-75">Free</span>}
-                </button>
-              ))}
-            </div>
-          </div>
 
-          {/* Выбор модели */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Модель
-            </label>
-            <select
-              value={selectedModel?.id || ''}
-              onChange={(e) => {
-                const model = availableModels.find(m => m.id === e.target.value);
-                if (model) selectModel(model);
-              }}
-              className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            >
-              <option value="">Выберите модель...</option>
-              {availableModels.map((model) => (
-                <option key={model.id} value={model.id}>
-                  {model.name} {model.free && '(Free)'}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      )}
 
       {/* Выбор типа промпта */}
       <div className="grid grid-cols-3 gap-3">
@@ -255,8 +195,8 @@ const ImproveTab: React.FC = () => {
         {/* Кнопка улучшения */}
         <button
           onClick={handleImprove}
-          disabled={!inputText.trim() || isLoading || !selectedModel}
-          className="flex items-center justify-center space-x-2 w-full py-4 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-600 dark:disabled:to-gray-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-[1.02] disabled:hover:scale-100 disabled:cursor-not-allowed font-medium"
+          disabled={!inputText.trim() || isLoading}
+          className="flex items-center justify-center space-x-2 w-full py-4 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-600 dark:disabled:to-gray-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg disabled:cursor-not-allowed font-medium"
         >
           {isLoading ? (
             <>
@@ -283,7 +223,7 @@ const ImproveTab: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handleCopy}
-                  className="flex items-center space-x-1 px-3 py-1 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
+                  className="flex items-center space-x-1 px-3 py-1 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all duration-200"
                   title="Копировать"
                 >
                   {isCopied ? (
@@ -295,7 +235,7 @@ const ImproveTab: React.FC = () => {
                 
                 <button
                   onClick={handleSave}
-                  className="flex items-center space-x-1 px-3 py-1 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-all duration-200"
+                  className="flex items-center space-x-1 px-3 py-1 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
                   title="Сохранить"
                 >
                   <Save className="w-4 h-4" />
@@ -303,7 +243,7 @@ const ImproveTab: React.FC = () => {
                 
                 <button
                   onClick={handleShare}
-                  className="flex items-center space-x-1 px-3 py-1 text-sm text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200"
+                  className="flex items-center space-x-1 px-3 py-1 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all duration-200"
                   title="Поделиться"
                 >
                   <Share className="w-4 h-4" />
@@ -311,7 +251,7 @@ const ImproveTab: React.FC = () => {
               </div>
             </div>
             
-            <div className="p-4 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-200 dark:border-teal-800 rounded-xl">
+            <div className="p-4 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-200 dark:border-indigo-800 rounded-xl">
               <p className="text-sm text-gray-900 dark:text-white whitespace-pre-wrap leading-relaxed">
                 {outputText}
               </p>

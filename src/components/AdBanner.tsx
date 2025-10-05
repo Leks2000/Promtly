@@ -57,18 +57,18 @@ const AdBanner: React.FC = () => {
   };
 
   return (
-    <div className="w-20 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-      <div className="p-3">
+    <div className="w-full h-16 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
+      <div className="flex items-center justify-center h-full px-4">
         {/* Рекламный блок */}
-        <div className="flex flex-col items-center space-y-2">
+        <div className="flex items-center justify-between w-full max-w-md">
           {adLoaded ? (
             // Google AdSense блок
             <ins
               className="adsbygoogle"
-              style={{ display: 'block', width: '100%', minHeight: '80px' }}
+              style={{ display: 'block', width: '100%', height: '50px' }}
               data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
               data-ad-slot="XXXXXXXXXX"
-              data-ad-format="vertical"
+              data-ad-format="horizontal"
               data-full-width-responsive="true"
             ></ins>
           ) : (
@@ -77,8 +77,8 @@ const AdBanner: React.FC = () => {
           )}
           
           {/* Информация о рекламе */}
-          <div className="text-xs text-gray-400 dark:text-gray-500 text-center">
-            Реклама
+          <div className="text-xs text-gray-400 dark:text-gray-500 ml-2">
+            Ad
           </div>
         </div>
       </div>
@@ -112,15 +112,17 @@ const MockAd: React.FC = () => {
   const [currentAd] = useState(mockAds[Math.floor(Math.random() * mockAds.length)]);
 
   return (
-    <div className="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 rounded-xl p-3 text-center">
-      <div className="text-2xl mb-2">{currentAd.image}</div>
-      <div className="text-xs font-medium text-gray-900 dark:text-white mb-1">
-        {currentAd.title}
+    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-lg px-4 py-2 flex items-center space-x-3 flex-1">
+      <div className="text-lg">{currentAd.image}</div>
+      <div className="flex-1">
+        <div className="text-sm font-medium text-gray-900 dark:text-white">
+          {currentAd.title}
+        </div>
+        <div className="text-xs text-gray-600 dark:text-gray-400">
+          {currentAd.description}
+        </div>
       </div>
-      <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-        {currentAd.description}
-      </div>
-      <div className="text-xs text-blue-500 font-medium">
+      <div className="text-xs text-indigo-500 font-medium">
         Ad
       </div>
     </div>

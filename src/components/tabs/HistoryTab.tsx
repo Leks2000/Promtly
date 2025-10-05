@@ -30,11 +30,11 @@ const HistoryTab: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-4">
+    <div className="flex flex-col h-full space-y-4 p-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         <div className="flex items-center space-x-2">
-          <History className="w-6 h-6 text-primary-500" />
+          <History className="w-6 h-6 text-indigo-500" />
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
             {getTranslation('history', settings.language)}
           </h1>

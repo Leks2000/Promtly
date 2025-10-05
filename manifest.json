@@ -48,6 +48,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "identity"
+    "identity",
+    "https://www.googleapis.com/*",
+    "https://accounts.google.com/*"
   ]
 }
