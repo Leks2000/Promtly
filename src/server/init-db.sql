@@ -4,50 +4,50 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   avatar TEXT,
-  googleId TEXT,
-  createdAt TIMESTAMP DEFAULT NOW(),
-  lastLoginAt TIMESTAMP DEFAULT NOW(),
-  subscriptionType TEXT DEFAULT 'free',
-  subscriptionExpiresAt TIMESTAMP
+  "googleId" TEXT,
+  "createdAt" TIMESTAMP DEFAULT NOW(),
+  "lastLoginAt" TIMESTAMP DEFAULT NOW(),
+  "subscriptionType" TEXT DEFAULT 'free',
+  "subscriptionExpiresAt" TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS prompts (
   id SERIAL PRIMARY KEY,
-  userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  "userId" INTEGER REFERENCES users(id) ON DELETE CASCADE,
   prompt TEXT NOT NULL,
-  improvedPrompt TEXT,
-  createdAt TIMESTAMP DEFAULT NOW()
+  "improvedPrompt" TEXT,
+  "createdAt" TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS favorites (
   id SERIAL PRIMARY KEY,
-  userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  "userId" INTEGER REFERENCES users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   content TEXT,
   tags TEXT[],
   category TEXT,
-  createdAt TIMESTAMP DEFAULT NOW(),
+  "createdAt" TIMESTAMP DEFAULT NOW(),
   usageCount INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS image_analysis (
   id SERIAL PRIMARY KEY,
-  userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  imageUrl TEXT NOT NULL,
-  originalPrompt TEXT,
-  generatedPrompts JSONB,
-  promptType TEXT,
-  createdAt TIMESTAMP DEFAULT NOW(),
-  isFavorite BOOLEAN DEFAULT FALSE
+  "userId" INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  "imageUrl" TEXT NOT NULL,
+  "originalPrompt" TEXT,
+  "generatedPrompts" JSONB,
+  "promptType" TEXT,
+  "createdAt" TIMESTAMP DEFAULT NOW(),
+  "isFavorite" BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS usage_stats (
   id SERIAL PRIMARY KEY,
-  userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  favoritesUsed INTEGER DEFAULT 0,
-  imageAnalysisUsed INTEGER DEFAULT 0,
-  historyItemsUsed INTEGER DEFAULT 0,
-  lastResetDate TIMESTAMP DEFAULT NOW()
+  "userId" INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  "favoritesUsed" INTEGER DEFAULT 0,
+  "imageAnalysisUsed" INTEGER DEFAULT 0,
+  "historyItemsUsed" INTEGER DEFAULT 0,
+  "lastResetDate" TIMESTAMP DEFAULT NOW()
 );
 
 -- Добавляем тестовых пользователей

@@ -87,12 +87,18 @@ export class DatabaseService {
   }
 
   // Методы для работы с пользователями
-  async createUser(userData: Omit<User, 'id' | 'createdAt' | 'lastLoginAt'>): Promise<User> {
+  async createUser(userData: Omit<User, 'id' | 'createdAt' | 'lastLoginAt' | 'subscriptionExpiresAt'>): Promise<User> {
     const user: User = {
       ...userData,
       id: this.generateId(),
+      name: userData.name,
+      email: userData.email,
+      avatar: userData.avatar,
+      googleId: userData.googleId, 
       createdAt: new Date(),
-      lastLoginAt: new Date()
+      lastLoginAt: new Date(),
+      subscriptiontype: 'free',
+      subscriptionExpiresAt: new Date(),
     };
 
     const response = await fetch(`${API_URL}/table/users`, {

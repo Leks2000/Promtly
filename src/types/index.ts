@@ -6,7 +6,7 @@ export interface User {
   googleId?: string;
   createdAt: Date;
   lastLoginAt: Date;
-  subscriptionType?: 'free' | 'pro';
+  subscriptiontype?: 'free' | 'pro';
   subscriptionExpiresAt?: Date;
 }
 

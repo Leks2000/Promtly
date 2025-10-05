@@ -10,7 +10,8 @@
     "https://poe.com/*",
     "https://accounts.google.com/*",
     "https://www.googleapis.com/*",
-    "https://pagead2.googlesyndication.com/*"
+    "https://pagead2.googlesyndication.com/*",
+    "https://promtly.onrender.com/*"
   ],
   "action": {
     "default_popup": "index.html",
@@ -29,7 +30,7 @@
     "128": "icons/icon128.png"
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://openrouter.ai https://api-inference.huggingface.co https://poe.com https://accounts.google.com https://www.googleapis.com https://pagead2.googlesyndication.com https://api.qrserver.com https://chart.googleapis.com https://is.gd https://*.chromiumapp.org;"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://openrouter.ai https://api-inference.huggingface.co https://poe.com https://accounts.google.com https://www.googleapis.com https://pagead2.googlesyndication.com https://api.qrserver.com https://chart.googleapis.com https://is.gd https://*.chromiumapp.org https://promtly.onrender.com;"
   },
   "oauth2": {
     "client_id": "1019228620951-2lvctsnreemkva94hdmgd661cg1mg24l.apps.googleusercontent.com",
