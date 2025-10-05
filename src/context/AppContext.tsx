@@ -11,7 +11,9 @@ import {
   PromptType,
   AIModel,
   SearchFilters,
-  ImageAnalysis
+  ImageAnalysis,
+  UsageStats,
+  FreemiumLimits
 } from '../types';
 import { ChromeApiService } from '../services/chromeApi';
 import { authService } from '../services/auth';
@@ -19,6 +21,7 @@ import { databaseService } from '../services/database';
 import { aiService } from '../services/aiProviders';
 import { sharingService } from '../services/sharing';
 import { LocalStorageService } from '../services/localStorage';
+import { freemiumService } from '../services/freemium';
 
 interface AppContextType extends AppState {
   // Навигация
@@ -66,6 +69,11 @@ interface AppContextType extends AppState {
   // Проверка дубликатов
   checkDuplicate: (content: string, type: 'favorite' | 'history') => Promise<boolean>;
   
+  // Freemium система
+  checkCanPerformAction: (action: 'favorites' | 'imageAnalysis' | 'history') => Promise<{ canPerform: boolean; reason?: string; currentUsage?: number; limit?: number }>;
+  updateUsageStats: (type: 'favorites' | 'imageAnalysis' | 'history') => Promise<void>;
+  getUserSubscriptionType: () => 'free' | 'pro';
+  
   // Утилиты
   copyToClipboard: (text: string) => Promise<boolean>;
   setLoading: (loading: boolean) => void;
@@ -93,7 +101,9 @@ type AppAction =
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'LOAD_STATE'; payload: Partial<AppState> }
   | { type: 'SET_IMAGE_ANALYSES'; payload: ImageAnalysis[] }
-  | { type: 'ADD_IMAGE_ANALYSIS'; payload: ImageAnalysis };
+  | { type: 'ADD_IMAGE_ANALYSIS'; payload: ImageAnalysis }
+  | { type: 'UPDATE_USAGE_STATS'; payload: UsageStats }
+  | { type: 'SET_FREEMIUM_LIMITS'; payload: FreemiumLimits };
 
 const initialState: AppState = {
   currentTab: 'improve',
@@ -132,7 +142,18 @@ const initialState: AppState = {
   error: null,
   searchFilters: {},
   selectedProvider: 'openrouter',
-  selectedModel: null
+  selectedModel: null,
+  usageStats: {
+    favoritesUsed: 0,
+    imageAnalysisUsed: 0,
+    historyItemsUsed: 0,
+    lastResetDate: new Date()
+  },
+  freemiumLimits: {
+    favorites: 3,
+    imageAnalysis: 3,
+    historyItems: 10
+  }
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -254,6 +275,18 @@ function appReducer(state: AppState, action: AppAction): AppState {
         imageAnalyses: [action.payload, ...state.imageAnalyses]
       };
     
+    case 'UPDATE_USAGE_STATS':
+      return {
+        ...state,
+        usageStats: action.payload
+      };
+    
+    case 'SET_FREEMIUM_LIMITS':
+      return {
+        ...state,
+        freemiumLimits: action.payload
+      };
+    
     default:
       return state;
   }
@@ -343,6 +376,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Load image analyses from local storage
       const imageAnalyses = await ChromeApiService.getStorage(`imageAnalyses_${userId}`) || [];
       dispatch({ type: 'SET_IMAGE_ANALYSES', payload: imageAnalyses });
+      
+      // Load usage stats and freemium limits
+      const usageStats = await freemiumService.getUserUsageStats(userId);
+      dispatch({ type: 'UPDATE_USAGE_STATS', payload: usageStats });
+      
+      // Get subscription type and set limits
+      const subscriptionType = await freemiumService.checkSubscriptionStatus(state.user!);
+      const limits = freemiumService.getLimitsForUser(subscriptionType);
+      dispatch({ type: 'SET_FREEMIUM_LIMITS', payload: limits });
     } catch (error) {
       console.error('Error loading user data:', error);
     }
@@ -729,6 +771,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Freemium методы
+  const checkCanPerformAction = async (action: 'favorites' | 'imageAnalysis' | 'history') => {
+    if (!state.user) {
+      return { canPerform: false, reason: 'Необходимо войти в систему' };
+    }
+
+    const subscriptionType = getUserSubscriptionType();
+    return await freemiumService.canPerformAction(state.user.id, action, subscriptionType);
+  };
+
+  const updateUsageStats = async (type: 'favorites' | 'imageAnalysis' | 'history') => {
+    if (!state.user) return;
+
+    try {
+      const updatedStats = await freemiumService.updateUsageStats(state.user.id, type);
+      dispatch({ type: 'UPDATE_USAGE_STATS', payload: updatedStats });
+    } catch (error) {
+      console.error('Error updating usage stats:', error);
+    }
+  };
+
+  const getUserSubscriptionType = (): 'free' | 'pro' => {
+    if (!state.user) return 'free';
+    return state.user.subscriptionType || 'free';
+  };
+
   const contextValue: AppContextType = {
     ...state,
     setCurrentTab,
@@ -754,6 +822,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     analyzeImage,
     addImageAnalysis,
     checkDuplicate,
+    checkCanPerformAction,
+    updateUsageStats,
+    getUserSubscriptionType,
     copyToClipboard,
     setLoading,
     setError

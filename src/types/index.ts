@@ -6,6 +6,8 @@ export interface User {
   googleId?: string;
   createdAt: Date;
   lastLoginAt: Date;
+  subscriptionType?: 'free' | 'pro';
+  subscriptionExpiresAt?: Date;
 }
 
 export interface PromptHistoryItem {
@@ -77,6 +79,20 @@ export interface AppSettings {
   showAds: boolean;
   cacheEnabled: boolean;
   autoSave: boolean;
+  gumroadProductId?: string;
+}
+
+export interface FreemiumLimits {
+  favorites: number;
+  imageAnalysis: number;
+  historyItems: number;
+}
+
+export interface UsageStats {
+  favoritesUsed: number;
+  imageAnalysisUsed: number;
+  historyItemsUsed: number;
+  lastResetDate: Date;
 }
 
 export interface SearchFilters {
@@ -127,4 +143,6 @@ export interface AppState {
   searchFilters: SearchFilters;
   selectedProvider: AIProvider;
   selectedModel: AIModel | null;
+  usageStats: UsageStats;
+  freemiumLimits: FreemiumLimits;
 }
