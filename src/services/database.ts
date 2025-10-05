@@ -95,7 +95,7 @@ export class DatabaseService {
       lastLoginAt: new Date()
     };
 
-    const response = await fetch(`${API_URL}/tables/users`, {
+    const response = await fetch(`${API_URL}/table/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -112,7 +112,7 @@ export class DatabaseService {
 
   async getUserByGoogleId(googleId: string): Promise<User | null> {
     try {
-      const response = await fetch(`${API_URL}/tables/users?search=${googleId}`);
+      const response = await fetch(`${API_URL}/table/users?search=${googleId}`);
       if (!response.ok) return null;
       
       const data = await response.json();
@@ -124,7 +124,7 @@ export class DatabaseService {
   }
 
   async updateUserLastLogin(userId: string): Promise<void> {
-    await fetch(`${API_URL}/tables/users/${userId}`, {
+    await fetch(`${API_URL}/table/users/${userId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
@@ -143,7 +143,7 @@ export class DatabaseService {
       timestamp: new Date()
     };
 
-    const response = await fetch(`${API_URL}/tables/prompt_history`, {
+    const response = await fetch(`${API_URL}/table/prompt_history`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -164,7 +164,7 @@ export class DatabaseService {
     page: number;
     limit: number;
   }> {
-    const response = await fetch(`${API_URL}/tables/prompt_history?page=${page}&limit=${limit}&search=${userId}`);
+    const response = await fetch(`${API_URL}/table/prompt_history?page=${page}&limit=${limit}&search=${userId}`);
     
     if (!response.ok) {
       throw new Error('Failed to get user history');
@@ -184,7 +184,7 @@ export class DatabaseService {
   }
 
   async deleteHistoryItem(id: string): Promise<void> {
-    const response = await fetch(`${API_URL}/tables/prompt_history/${id}`, {
+    const response = await fetch(`${API_URL}/table/prompt_history/${id}`, {
       method: 'DELETE'
     });
 
@@ -210,7 +210,7 @@ export class DatabaseService {
       usageCount: 0
     };
 
-    const response = await fetch(`${API_URL}/tables/favorites`, {
+    const response = await fetch(`${API_URL}/table/favorites`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -226,7 +226,7 @@ export class DatabaseService {
   }
 
   async getUserFavorites(userId: string): Promise<FavoritePrompt[]> {
-    const response = await fetch(`${API_URL}/tables/favorites?search=${userId}`);
+    const response = await fetch(`${API_URL}/table/favorites?search=${userId}`);
     
     if (!response.ok) {
       throw new Error('Failed to get user favorites');
@@ -237,7 +237,7 @@ export class DatabaseService {
   }
 
   async deleteFavorite(id: string): Promise<void> {
-    const response = await fetch(`${API_URL}/tables/favorites/${id}`, {
+    const response = await fetch(`${API_URL}/table/favorites/${id}`, {
       method: 'DELETE'
     });
 
@@ -248,13 +248,13 @@ export class DatabaseService {
 
   async incrementFavoriteUsage(id: string): Promise<void> {
     // Получаем текущий объект
-    const response = await fetch(`${API_URL}/tables/favorites/${id}`);
+    const response = await fetch(`${API_URL}/table/favorites/${id}`);
     if (!response.ok) return;
     
     const favorite = await response.json();
     
     // Увеличиваем счетчик
-    await fetch(`${API_URL}/tables/favorites/${id}`, {
+    await fetch(`${API_URL}/table/favorites/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
@@ -272,7 +272,7 @@ export class DatabaseService {
       id: this.generateShareId()
     };
 
-    const response = await fetch(`${API_URL}/tables/shared_prompts`, {
+    const response = await fetch(`${API_URL}/table/shared_prompts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -289,12 +289,12 @@ export class DatabaseService {
 
   async getSharedPrompt(shareId: string): Promise<ShareablePrompt | null> {
     try {
-      const response = await fetch(`${API_URL}/tables/shared_prompts/${shareId}`);
+      const response = await fetch(`${API_URL}/table/shared_prompts/${shareId}`);
       if (!response.ok) return null;
       
       // Увеличиваем счетчик просмотров
       const prompt = await response.json();
-      await fetch(`${API_URL}/tables/shared_prompts/${shareId}`, {
+      await fetch(`${API_URL}/table/shared_prompts/${shareId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -313,7 +313,7 @@ export class DatabaseService {
 
   // Поиск и фильтрация
   async searchHistory(userId: string, query: string, filters?: any): Promise<PromptHistoryItem[]> {
-    let url = `${API_URL}/tables/prompt_history?search=${encodeURIComponent(query)}`;
+    let url = `${API_URL}/table/prompt_history?search=${encodeURIComponent(query)}`;
     
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
