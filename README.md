@@ -115,35 +115,6 @@
 - **Авторизация**: Google OAuth 2.0
 - **Расширение**: Chrome Extension Manifest V3
 
-### Структура файлов
-```
-src/
-├── components/              # React компоненты
-│   ├── Layout.tsx          # Основной макет
-│   ├── TabNavigation.tsx   # Навигация справа
-│   ├── MainContent.tsx     # Основной контент
-│   ├── AdBanner.tsx        # Рекламный баннер
-│   └── tabs/               # Компоненты вкладок
-│       ├── ImproveTab.tsx  # Улучшение промптов
-│       ├── HistoryTab.tsx  # История
-│       ├── FavoritesTab.tsx # Избранное
-│       ├── SettingsTab.tsx # Настройки
-│       └── ProfileTab.tsx  # Профиль
-├── context/                # React Context
-│   └── AppContext.tsx      # Глобальное состояние
-├── services/               # Внешние сервисы
-│   ├── aiProviders.ts      # ИИ провайдеры
-│   ├── auth.ts             # Google OAuth
-│   ├── database.ts         # База данных
-│   ├── sharing.ts          # Расшаривание
-│   └── chromeApi.ts        # Chrome API
-├── types/                  # TypeScript типы
-│   └── index.ts            # Все типы данных
-├── utils/                  # Утилиты
-│   └── translations.ts     # Переводы (RU/EN)
-└── [другие файлы]
-```
-
 ## 📊 Функциональные возможности
 
 ### Вкладки приложения
@@ -158,24 +129,8 @@ src/
 
 ### API интеграции
 
-#### ИИ провайдеры
-```typescript
-// OpenRouter (бесплатные модели)
-- microsoft/wizardlm-2-8x22b
-- mistralai/mixtral-8x7b-instruct  
-- meta-llama/llama-3.1-8b-instruct
+#### База данных (Table API
 
-// HuggingFace (бесплатные endpoints)
-- mistralai/Mixtral-8x7B-Instruct-v0.1
-- microsoft/DialoGPT-large
-
-// Poe API (бесплатные лимиты)
-- Claude (Anthropic)
-- GPT (OpenAI) 
-- Gemini (Google)
-```
-
-#### База данных (Table API)
 ```sql
 -- Таблицы
 users              -- Пользователи
