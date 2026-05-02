@@ -1,385 +1,212 @@
-# 🚀 AI Prompt Improver - Chrome Extension
+<div align="center">
 
-**Современное Chrome расширение для анализа изображений и улучшения AI промптов**
+<img src="assets/icon128.png" width="80" height="80" alt="Promtly - AI Prompt Improver Chrome Extension" />
 
-🖼️ **Анализ изображений** • 📝 **Улучшение промптов** • ⭐ **Избранное** • 🔄 **Синхронизация**
+# Promtly
 
-## ✨ Основные возможности
+**AI Prompt Improver & Image Analyzer — Free Chrome Extension for ChatGPT, Claude, Gemini & Stable Diffusion**
 
-### 🆕 Новые функции
-- **🖼️ Анализ изображений** - загрузите изображение и получите промпты в 3 форматах
-- **📱 Drag & Drop интерфейс** - просто перетащите изображение для анализа  
-- **💾 Локальное хранение** - работает без авторизации
-- **🔍 Проверка дубликатов** - предотвращает повторное сохранение промптов
+[![Install on Chrome](https://img.shields.io/badge/Install_on_Chrome-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://github.com/Leks2000/Promtly)
+[![License: MIT](https://img.shields.io/badge/License-MIT-7c3aed?style=flat-square)](LICENSE)
+[![React 18](https://img.shields.io/badge/React_18-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Open Source](https://img.shields.io/badge/Open_Source-✓-brightgreen?style=flat-square)](https://github.com/Leks2000/Promtly)
 
-### 🔐 Авторизация и пользователи
-- **Google OAuth авторизация** - безопасный вход через Google аккаунт
-- **Профиль пользователя** - отображение информации, статистики
-- **Мультиаккаунт** - возможность смены пользователей
-- **Автоматический вход** - сохранение сессии между запусками
+[**→ Install Promtly for Chrome**](https://github.com/Leks2000/Promtly) · [Report a Bug](https://github.com/Leks2000/Promtly/issues) · [Request a Feature](https://github.com/Leks2000/Promtly/issues)
 
-### 🤖 ИИ провайдеры и модели
-- **OpenRouter** - доступ к бесплатным моделям (WizardLM-2, Mixtral, LLaMA 3.1)
-- **HuggingFace** - бесплатные API endpoints (Mixtral, DialoGPT)
-- **Poe API** - интеграция с Claude, GPT, Gemini (бесплатные лимиты)
-- **Выбор модели** - возможность выбора конкретной ИИ модели
-- **Статистика использования** - отслеживание токенов и запросов
-
-### 📝 Три типа улучшения промптов
-
-#### 1. 🎨 Civitai (для генерации изображений)
-```
-Оптимизирует промпты для Stable Diffusion и других моделей генерации изображений:
-✓ Детализация стиля и композиции
-✓ Технические параметры (разрешение, качество)
-✓ Лучшие практики Stable Diffusion
-✓ Английский язык для совместимости
-```
-
-#### 2. 🌐 Универсальный
-```
-Улучшает промпты для любых ИИ задач:
-✓ Четкие инструкции и контекст
-✓ Примеры желаемого результата
-✓ Структурированный формат
-✓ Универсальность для разных моделей
-```
-
-#### 3. 💬 Текстовый (для ChatGPT/Claude/Gemini)
-```
-Специально для диалоговых ИИ моделей:
-✓ Определение роли для ИИ
-✓ Четкая структура диалога
-✓ Примеры взаимодействия
-✓ Оптимизация для конверсации
-```
-
-### 🗂 История и управление данными
-- **Полная история** - все улучшенные промпты с метаданными
-- **Привязка к пользователю** - история сохраняется для каждого аккаунта
-- **Детальная информация** - провайдер ИИ, модель, количество токенов
-- **Действия с историей** - копирование, удаление, добавление в избранное
-- **Очистка истории** - полная или выборочная очистка
-
-### ⭐ Избранное и организация
-- **Система избранного** - сохранение полезных промптов
-- **Теги и категории** - организация по типам и темам
-- **Счетчик использования** - отслеживание популярности промптов
-- **Поиск по избранному** - быстрый поиск нужных промптов
-- **Импорт/экспорт** - сохранение в файлы различных форматов
-
-### 🔍 Поиск и фильтрация
-- **Полнотекстовый поиск** - поиск по содержимому и заголовкам
-- **Фильтры по типам** - civitai, универсальный, текстовый
-- **Фильтры по провайдерам** - OpenRouter, HuggingFace, Poe
-- **Фильтры по датам** - поиск за определенный период
-- **Фильтры по тегам** - комбинирование нескольких тегов
-- **Сохраненные фильтры** - быстрое применение частых запросов
-
-### 🌐 Расшаривание и экспорт
-- **Публичные ссылки** - создание ссылок для расшаривания промптов
-- **QR-коды** - автоматическая генерация QR-кодов для ссылок
-- **Социальные сети** - быстрое расшаривание в Telegram, Twitter, VK
-- **Встраивание** - генерация iframe кода для сайтов
-- **Экспорт файлов** - сохранение в JSON, TXT, Markdown
-- **Статистика просмотров** - отслеживание популярности
-
-### 🎨 Современный интерфейс
-- **Навигация справа** - иконки навигации расположены справа
-- **Минималистичный дизайн** - чистый современный UI
-- **Темная/светлая тема** - автоматическое переключение
-- **Адаптивность** - оптимизация для размера 400x600px
-- **Анимации** - плавные переходы и hover эффекты
-- **Быстрые кнопки** - "Сохранить", "Улучшить", "Поделиться"
-
-### 🆓 Бесплатные AI модели
-- **HuggingFace** - 1000+ бесплатных запросов в день
-- **OpenRouter** - $5 бесплатных кредитов при регистрации  
-- **Локальный анализ** - резервный метод без интернета
-- **Множественные провайдеры** - автоматическое переключение при недоступности
-
-### 💾 Локальное кэширование
-- **Офлайн режим** - частичная работа без интернета
-- **Кэш избранного** - быстрый доступ к сохраненным промптам
-- **Кэш настроек** - сохранение пользовательских предпочтений
-- **Автоочистка** - управление размером кэша
-
-## 🏗 Архитектура проекта
-
-### Технический стек
-- **Frontend**: React 18 + TypeScript + Vite
-- **Стилизация**: Tailwind CSS
-- **Состояние**: React Context API + useReducer
-- **Иконки**: Lucide React
-- **База данных**: RESTful Table API
-- **Авторизация**: Google OAuth 2.0
-- **Расширение**: Chrome Extension Manifest V3
-
-## 📊 Функциональные возможности
-
-### Вкладки приложения
-
-| Вкладка | Функции | Описание |
-|---------|---------|----------|
-| 🚀 **Улучшить** | Основная функция улучшения промптов | Выбор типа, провайдера, модели. Быстрые кнопки сохранения и расшаривания |
-| 📜 **История** | Просмотр всех улучшенных промптов | Поиск, фильтрация, копирование, удаление. Привязка к пользователю |
-| ⭐ **Избранное** | Сохраненные промпты | Теги, категории, поиск, экспорт. Счетчики использования |
-| ⚙️ **Настройки** | Конфигурация приложения | Тема, язык, API ключи, реклама, кэширование |
-| 👤 **Профиль** | Управление аккаунтом | Вход/выход, статистика, экспорт данных |
-
-### API интеграции
-
-#### База данных (Table API
-
-```sql
--- Таблицы
-users              -- Пользователи
-prompt_history     -- История промптов
-favorites          -- Избранные промпты
-shared_prompts     -- Расшаренные промпты
-
--- Автоматическое создание при первом запуске
-```
-
-## 🛠 Быстрая установка
-
-### 1. Клонирование и сборка
-```bash
-git clone <repository-url>
-cd ai-prompt-improver
-npm install
-npm run build:extension
-```
-
-### 2. Установка в Chrome
-1. Откройте `chrome://extensions/`
-2. Включите "Режим разработчика"
-3. Нажмите "Загрузить распакованное расширение"
-4. Выберите папку `dist/`
-
-### 3. Настройка AI сервисов
-📖 **[Руководство по бесплатным AI моделям](./FREE_AI_MODELS_GUIDE.md)**  
-🔧 **[Полное руководство по настройке](./AI_SETUP_GUIDE.md)**
-
-## 🎮 Использование
-
-### 1. Первый запуск
-1. Нажмите на иконку расширения в панели инструментов
-2. Войдите через Google аккаунт
-3. Настройте API ключи для ИИ провайдеров (в настройках)
-
-### 2. Улучшение промптов
-1. Выберите тип промпта (Civitai/Универсальный/Текстовый)
-2. Введите ваш промпт в текстовое поле
-3. Выберите ИИ провайдер и модель
-4. Нажмите "Улучшить промпт"
-5. Используйте быстрые кнопки: Копировать/Сохранить/Поделиться
-
-### 3. Работа с историей
-1. Перейдите на вкладку "История"
-2. Используйте поиск для нахождения промптов
-3. Применяйте фильтры по типу, провайдеру, дате
-4. Копируйте нужные промпты или добавляйте в избранное
-
-### 4. Организация избранного
-1. Сохраняйте полезные промпты в избранное
-2. Добавляйте теги для категоризации
-3. Используйте поиск и фильтры для быстрого доступа
-4. Экспортируйте в файлы для резервного копирования
-
-### 5. Расшаривание промптов
-1. Нажмите кнопку "Поделиться" рядом с промптом
-2. Получите публичную ссылку и QR-код
-3. Поделитесь в социальных сетях одним кликом
-4. Скопируйте встраиваемый код для сайтов
-
-## 🔧 Конфигурация
-
-### Переменные окружения (.env)
-```bash
-# Google OAuth
-GOOGLE_CLIENT_ID=your_google_client_id
-
-# ИИ провайдеры  
-OPENROUTER_API_KEY=your_openrouter_key
-HUGGINGFACE_API_KEY=your_huggingface_key
-POE_TOKEN=your_poe_token
-
-# Google Ads (для монетизации)
-GOOGLE_ADS_CLIENT_ID=ca-pub-xxxxxxxxxxxxxxxxx
-```
-
-### Получение API ключей
-
-#### OpenRouter (рекомендуется)
-1. Регистрация: [openrouter.ai](https://openrouter.ai)
-2. Получите бесплатный API ключ
-3. Доступны мощные модели: WizardLM-2, Mixtral, LLaMA 3.1
-
-#### HuggingFace
-1. Регистрация: [huggingface.co](https://huggingface.co) 
-2. Settings → Access Tokens → Create new token
-3. Бесплатные inference endpoints
-
-#### Google OAuth
-1. [Google Cloud Console](https://console.cloud.google.com/)
-2. Create Project → APIs & Services → Credentials
-3. OAuth 2.0 Client ID → Chrome Extension
-
-## 📈 Возможности расширения
-
-### Добавление новых ИИ провайдеров
-```typescript
-// src/services/aiProviders.ts
-class YourAIProvider {
-  async improvePrompt(prompt: string): Promise<AIResponse> {
-    // Ваша реализация
-  }
-}
-```
-
-### Создание новых типов промптов
-```typescript
-// src/types/index.ts
-export type PromptType = 'civitai' | 'universal' | 'textual' | 'your-type';
-
-// src/services/aiProviders.ts  
-export const promptTemplates = {
-  'your-type': {
-    ru: 'Ваш шаблон промпта...',
-    en: 'Your prompt template...'
-  }
-};
-```
-
-### Кастомизация интерфейса
-```typescript
-// tailwind.config.js - изменение цветовой схемы
-// src/components/ - модификация компонентов
-// src/utils/translations.ts - добавление языков
-```
-
-## 🔒 Безопасность и приватность
-
-### Локальное хранение данных
-- Все API ключи хранятся локально в браузере
-- Данные пользователя не передаются третьим лицам
-- История и избранное синхронизируются через базу данных
-
-### Разрешения расширения
-```json
-// manifest.json
-"permissions": [
-  "storage",     // Локальное хранение данных
-  "activeTab"    // Доступ к активной вкладке
-]
-```
-
-### Безопасные API вызовы
-- Все запросы к ИИ провайдерам идут через HTTPS
-- Токены авторизации шифруются
-- Отсутствие прямого доступа к файловой системе
-
-## 📊 Статистика и аналитика
-
-### Пользовательская статистика
-- Количество улучшенных промптов
-- Использованные токены по провайдерам
-- Популярные типы промптов
-- Активность по дням/неделям
-
-### Статистика расшаривания
-- Количество просмотров расшаренных промптов
-- Популярные промпты в сообществе
-- География просмотров
-- Социальные сети источники трафика
-
-## 🚀 Планы развития
-
-### Ближайшие обновления (v1.1)
-- [ ] Поддержка Firefox браузера
-- [ ] Темплейты промптов по категориям
-- [ ] Продвинутая аналитика использования
-- [ ] Экспорт в облачные сервисы
-- [ ] Горячие клавиши для быстрого доступа
-
-### Средесрочные планы (v1.2-1.3)
-- [ ] Мобильная версия (PWA)
-- [ ] Интеграция с популярными ИИ сервисами
-- [ ] Система рейтингов промптов
-- [ ] Маркетплейс промптов
-- [ ] API для разработчиков
-
-### Долгосрочные планы (v2.0+)
-- [ ] Собственная ИИ модель для улучшения промптов
-- [ ] Интеграция с IDE и текстовыми редакторами
-- [ ] Корпоративная версия с командной работой
-- [ ] Машинное обучение для персонализации
-- [ ] Многоязычная поддержка (10+ языков)
-
-## 🤝 Вклад в проект
-
-### Как помочь проекту
-1. **Тестирование** - сообщайте об ошибках через GitHub Issues
-2. **Переводы** - помогите перевести на другие языки
-3. **Документация** - улучшайте документацию и примеры
-4. **Код** - создавайте Pull Request с улучшениями
-5. **Дизайн** - предлагайте улучшения UI/UX
-
-### Разработка
-```bash
-# Форкните репозиторий
-# Создайте ветку для вашей функции
-git checkout -b feature/your-feature
-
-# Внесите изменения и создайте коммиты
-git commit -m "Add: your feature description"
-
-# Отправьте изменения и создайте Pull Request
-git push origin feature/your-feature
-```
-
-## 📞 Поддержка
-
-### Документация
-- **[Руководство по установке](./INSTALLATION.md)** - полная инструкция по установке
-- **[Руководство разработчика](./DEVELOPMENT.md)** - техническая документация
-
-### Связь
-- **GitHub Issues**: [Создать задачу](https://github.com/your-username/ai-prompt-improver/issues)
-- **Email**: support@ai-prompt-improver.com
-- **Telegram**: [@ai_prompt_improver](https://t.me/ai_prompt_improver)
-- **Discord**: [Сообщество разработчиков](#)
-
-### Часто задаваемые вопросы
-
-**Q: Нужны ли платные API ключи?**  
-A: Нет, все интегрированные провайдеры имеют бесплатные тарифы.
-
-**Q: Безопасно ли вводить API ключи?**  
-A: Да, все данные хранятся локально и не передаются третьим лицам.
-
-**Q: Работает ли расширение офлайн?**  
-A: Базовый интерфейс работает офлайн, ИИ функции требуют интернет.
-
-**Q: Можно ли экспортировать данные?**  
-A: Да, доступен экспорт истории и избранного в различных форматах.
-
-## 📄 Лицензия
-
-MIT License - смотрите файл [LICENSE](./LICENSE) для деталей.
-
-## 🌟 Благодарности
-
-- **React Team** - за отличный фреймворк
-- **Tailwind CSS** - за удобную систему стилей  
-- **Lucide** - за красивые иконки
-- **OpenRouter** - за доступ к бесплатным ИИ моделям
-- **HuggingFace** - за открытые модели и API
-- **Google** - за Chrome Extensions API и OAuth
+</div>
 
 ---
 
-⭐ **Поставьте звезду**, если проект оказался полезным!  
-🚀 **Попробуйте расширение** и улучшите ваши промпты с помощью ИИ!  
-💬 **Поделитесь отзывом** для дальнейшего развития проекта!
+## What is Promtly?
+
+**Promtly** is a free, open-source Chrome extension that automatically improves your AI prompts — turning rough ideas into precise, high-quality instructions that actually get results.
+
+Whether you're generating images in Stable Diffusion, writing with ChatGPT, or building something with Claude — Promtly rewrites your prompt using AI so you don't need prompt engineering experience. Just type what you want, pick a mode, and get a better version in seconds.
+
+**Drop any image** into Promtly and it will generate a ready-to-use prompt for you — perfect for recreating styles in Stable Diffusion or describing visuals for text-based AI models.
+
+> Your prompts are processed through **your own API keys** and stored **locally in your browser**. Nothing goes through our servers.
+
+---
+
+## Table of Contents
+
+- [Key Features](#key-features)
+- [Three Prompt Improvement Modes](#three-prompt-improvement-modes)
+- [Image Analysis → Prompt Generation](#image-analysis--prompt-generation)
+- [Prompt Library & History](#prompt-library--history)
+- [Supported AI Platforms](#supported-ai-platforms)
+- [Supported API Providers](#supported-api-providers)
+- [Installation](#installation)
+- [Privacy](#privacy)
+- [Tech Stack](#tech-stack)
+- [Contributing](#contributing)
+
+---
+
+## Key Features
+
+| Feature | Description |
+|---|---|
+| ✍️ **3 Prompt Modes** | Image generation, conversational AI, and universal improvement |
+| 🖼️ **Image → Prompt** | Analyze any image and generate a prompt in all three formats |
+| 📚 **Prompt Library** | Save, tag, search, and export your best prompts |
+| 🔗 **Prompt Sharing** | Share prompts via public links, QR codes, or Telegram/X |
+| 🔒 **Privacy First** | Your own API keys, local storage, no data collection |
+| 🆓 **Free & Open Source** | MIT license, no paywalls on core features |
+
+---
+
+## Three Prompt Improvement Modes
+
+### 🎨 Image Generation — Stable Diffusion / Midjourney / Civitai / DALL·E
+Rewrites your prompt with proper style tags, composition details, quality modifiers, and technical parameters. Output is always in English for maximum model compatibility.
+
+**Before:** `a girl in a forest`  
+**After:** `portrait of a young woman in an enchanted forest, soft volumetric lighting, f/1.8 bokeh, detailed foliage, photorealistic, 8k, trending on ArtStation, shot on Canon EOS R5`
+
+---
+
+### 🌐 Universal — Any AI Task
+Improves any prompt for any AI model — adds context, structure, and examples so the model understands exactly what you need. Works for research, writing, coding, analysis, and more.
+
+---
+
+### 💬 Conversational — ChatGPT / Claude / Gemini / Copilot
+Structures your prompt as a proper instruction: defines the AI role, expected output format, tone, and interaction style. Gets you consistent, on-target responses every time.
+
+---
+
+## Image Analysis → Prompt Generation
+
+Drop any image into Promtly and instantly get a ready-to-use prompt in **all three formats**:
+
+- 🎨 **Stable Diffusion prompt** — recreate the image style in any diffusion model
+- 🌐 **Universal description** — detailed visual description for any text-based AI
+- 💬 **Conversational prompt** — ask an AI to generate something similar
+
+**Use cases:** recreating a style in ComfyUI, generating image variants, reverse-engineering reference images, or describing visuals to a text-only model.
+
+---
+
+## Prompt Library & History
+
+Every improved prompt is automatically saved with full metadata — provider, model, tokens used, and timestamp.
+
+- **Full search** across all saved prompts
+- **Tags and categories** for organization
+- **Filters** by type, provider, date, or tag
+- **Export** to JSON, TXT, or Markdown
+
+### Prompt Sharing
+
+- Generate a **public shareable link** for any prompt
+- **Auto-generated QR codes** for mobile sharing
+- **One-click share** to Telegram or Twitter/X
+- **Embed code** for websites and docs
+
+---
+
+## Supported AI Platforms
+
+Works with every major AI platform — no setup or configuration required.
+
+| Platform | Supported |
+|---|---|
+| ChatGPT (chatgpt.com) | ✅ |
+| Claude (claude.ai) | ✅ |
+| Gemini (gemini.google.com) | ✅ |
+| Microsoft Copilot | ✅ |
+| Stable Diffusion / ComfyUI | ✅ |
+| Midjourney | ✅ |
+| DALL·E | ✅ |
+| Civitai | ✅ |
+| Perplexity | ✅ |
+
+---
+
+## Supported API Providers
+
+Promtly uses **your own API keys** — you're never locked into a single provider.
+
+| Provider | Free Tier | Models |
+|---|---|---|
+| OpenRouter | ✅ Free $5 credits on signup | WizardLM-2, Mixtral, LLaMA 3.1 |
+| HuggingFace | ✅ 1000+ free requests/day | Mixtral, DialoGPT |
+| Poe | ✅ Free tier available | Claude, GPT-4, Gemini |
+
+---
+
+## Installation
+
+**Option 1 — Chrome Web Store** *(coming soon)*
+
+1. Go to Chrome Web Store → Promtly
+2. Click **Add to Chrome**
+3. Open any AI platform and start improving prompts
+
+**Option 2 — Manual Install (Developer Mode)**
+
+```bash
+git clone https://github.com/Leks2000/Promtly.git
+cd Promtly
+npm install
+npm run build
+```
+
+1. Open Chrome → `chrome://extensions/`
+2. Enable **Developer mode** (top right)
+3. Click **Load unpacked** → select the `dist/` folder
+4. Open ChatGPT, Claude, or Gemini and start using Promtly
+
+---
+
+## Privacy
+
+Promtly is built privacy-first:
+
+- ✅ **Your own API keys** — prompts are processed through your provider, not ours
+- ✅ **Local storage by default** — all data stays in your browser
+- ✅ **No tracking, no analytics, no data selling**
+- ✅ **Cloud sync is optional** and requires explicit Google sign-in
+- ✅ **Open source** — read every line of the code yourself
+
+---
+
+## Tech Stack
+
+- **React 18** — UI components
+- **TypeScript** — type-safe codebase
+- **Vite** — fast build tooling
+- **Tailwind CSS** — utility-first styling
+- **Chrome Extension Manifest V3** — modern extension architecture
+- **Google OAuth 2.0** — optional cloud sync authentication
+
+---
+
+## Contributing
+
+Issues, feature requests, and PRs are welcome.
+
+1. Fork the repo
+2. Create your branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Open a Pull Request
+
+---
+
+## License
+
+MIT © [Leks2000](https://github.com/Leks2000)
+
+---
+
+<div align="center">
+
+**[⭐ Star this repo if it helped you](https://github.com/Leks2000/Promtly)**
+
+*Bad prompts = bad results. Fix the prompt, fix the output.*
+
+</div>
